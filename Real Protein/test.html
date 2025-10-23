@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .console-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .test-image {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #007bff;
+            margin: 10px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Google Sheets Connection Test</h1>
+        
+        <div class="test-section info">
+            <h3>📋 Test Instructions</h3>
+            <p>This page will test your Google Sheets connection and image URLs. Click the buttons below to run tests.</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🔗 Google Sheets Connection Test</h3>
+            <button onclick="testGoogleSheetsConnection()">Test Connection</button>
+            <button onclick="clearOutput()">Clear Output</button>
+            <div id="connectionResult" class="console-output"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🖼️ Image URL Test</h3>
+            <button onclick="testImageUrls()">Test All Image URLs</button>
+            <div id="imageResult" class="console-output"></div>
+            <div id="testImages"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Raw Data Display</h3>
+            <button onclick="showRawData()">Show Raw Data</button>
+            <div id="rawDataResult" class="console-output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSEVCXE0GTxuBpP7AitGVYCYkpGCFytqq5Iu9zf445nzqLzV5ELSyAEBarkaQWZq3_Ig/exec';
+        
+        let talentData = [];
+
+        // Test Google Sheets connection
+        async function testGoogleSheetsConnection() {
+            const output = document.getElementById('connectionResult');
+            output.innerHTML = '🔄 Testing connection...\n';
+            
+            try {
+                const response = await fetch(`${GOOGLE_APPS_SCRIPT_URL}?action=getTalentData`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    talentData = data.data;
+                    output.innerHTML = `✅ Connection successful!\n\n`;
+                    output.innerHTML += `📊 Data loaded:\n`;
+                    output.innerHTML += `- Total rows: ${data.data.length}\n`;
+                    output.innerHTML += `- First row columns: ${data.data[0] ? data.data[0].length : 0}\n\n`;
+                    
+                    if (data.data.length > 0) {
+                        output.innerHTML += `📋 First row data:\n`;
+                        data.data[0].forEach((cell, index) => {
+                            const columnLetter = String.fromCharCode(65 + index);
+                            output.innerHTML += `Column ${columnLetter} (${index}): "${cell}"\n`;
+                        });
+                    }
+                } else {
+                    output.innerHTML = `❌ Connection failed: ${data.error}\n`;
+                }
+            } catch (error) {
+                output.innerHTML = `❌ Error: ${error.message}\n`;
+            }
+        }
+
+        // Test image URLs
+        async function testImageUrls() {
+            const output = document.getElementById('imageResult');
+            const imagesContainer = document.getElementById('testImages');
+            
+            if (talentData.length === 0) {
+                output.innerHTML = '❌ No data loaded. Please test connection first.\n';
+                return;
+            }
+            
+            output.innerHTML = '🔄 Testing image URLs...\n';
+            imagesContainer.innerHTML = '';
+            
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (let i = 0; i < Math.min(talentData.length, 5); i++) {
+                const row = talentData[i];
+                const imageUrl = row[7]; // Column H
+                const talentName = row[1] || `Talent ${i + 1}`;
+                
+                output.innerHTML += `\n--- Testing ${talentName} ---\n`;
+                output.innerHTML += `Original URL: "${imageUrl}"\n`;
+                
+                if (!imageUrl) {
+                    output.innerHTML += `❌ No URL in column H\n`;
+                    failCount++;
+                    continue;
+                }
+                
+                const formattedUrls = formatGoogleDriveImage(imageUrl);
+                output.innerHTML += `Formatted URLs: ${Array.isArray(formattedUrls) ? formattedUrls.join(', ') : formattedUrls}\n`;
+                
+                // Test image loading with multiple URL formats
+                const testImg = document.createElement('img');
+                testImg.className = 'test-image';
+                testImg.alt = talentName;
+                
+                const promise = new Promise((resolve) => {
+                    let urlIndex = 0;
+                    const urlsToTry = Array.isArray(formattedUrls) ? formattedUrls : [formattedUrls];
+                    
+                    const tryNextUrl = () => {
+                        if (urlIndex >= urlsToTry.length) {
+                            output.innerHTML += `❌ All URL formats failed\n`;
+                            failCount++;
+                            resolve(false);
+                            return;
+                        }
+                        
+                        const currentUrl = urlsToTry[urlIndex];
+                        output.innerHTML += `Trying URL ${urlIndex + 1}: ${currentUrl}\n`;
+                        
+                        testImg.onload = () => {
+                            output.innerHTML += `✅ Image loaded successfully with URL ${urlIndex + 1}!\n`;
+                            successCount++;
+                            resolve(true);
+                        };
+                        
+                        testImg.onerror = () => {
+                            output.innerHTML += `❌ URL ${urlIndex + 1} failed\n`;
+                            urlIndex++;
+                            tryNextUrl();
+                        };
+                        
+                        testImg.src = currentUrl;
+                    };
+                    
+                    tryNextUrl();
+                });
+                
+                imagesContainer.appendChild(testImg);
+                await promise;
+            }
+            
+            output.innerHTML += `\n📊 Summary: ${successCount} success, ${failCount} failed\n`;
+        }
+
+        // Show raw data
+        function showRawData() {
+            const output = document.getElementById('rawDataResult');
+            
+            if (talentData.length === 0) {
+                output.innerHTML = '❌ No data loaded. Please test connection first.\n';
+                return;
+            }
+            
+            output.innerHTML = '📊 Raw data from Google Sheets:\n\n';
+            output.innerHTML += JSON.stringify(talentData, null, 2);
+        }
+
+        // Format Google Drive image URL with multiple fallbacks
+        function formatGoogleDriveImage(url) {
+            if (!url) return null;
+            
+            // Extract file ID from various Google Drive URL formats
+            let fileId = null;
+            
+            if (url.includes('drive.google.com/file/d/')) {
+                const match = url.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+                if (match) fileId = match[1];
+            } else if (url.includes('drive.google.com/open?id=')) {
+                fileId = url.split('id=')[1].split('&')[0];
+            } else if (url.match(/^[a-zA-Z0-9-_]+$/)) {
+                fileId = url;
+            }
+            
+            if (!fileId) return url;
+            
+            // Try multiple Google Drive URL formats
+            return [
+                `https://drive.google.com/uc?export=view&id=${fileId}`,
+                `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`,
+                `https://lh3.googleusercontent.com/d/${fileId}`,
+                `https://docs.google.com/uc?export=view&id=${fileId}`
+            ];
+        }
+
+        // Clear output
+        function clearOutput() {
+            document.getElementById('connectionResult').innerHTML = '';
+            document.getElementById('imageResult').innerHTML = '';
+            document.getElementById('rawDataResult').innerHTML = '';
+            document.getElementById('testImages').innerHTML = '';
+        }
+
+        // Auto-run connection test on page load
+        window.onload = function() {
+            testGoogleSheetsConnection();
+        };
+    </script>
+</body>
+</html>
