@@ -747,8 +747,8 @@
         }
 
         .intro-gif {
-            width: 400px;
-            height: 700px;
+            width: 250px;
+            height: 440px;
             border: none;
             border-radius: 15px;
             background: #000;
@@ -756,8 +756,8 @@
         }
 
         .gif-placeholder {
-            width: 400px;
-            height: 700px;
+            width: 250px;
+            height: 440px;
             border-radius: 15px;
             background: #000;
             display: flex;
@@ -775,10 +775,20 @@
 
         .intro-message h2 {
             color: #60a5fa;
-            font-size: 1.5rem;
-            font-weight: 600;
+            font-size: 1.8rem;
+            font-weight: 700;
             line-height: 1.4;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 2px solid rgba(59, 130, 246, 0.3);
         }
 
         .player-subtitle {
@@ -840,7 +850,7 @@
         <!-- Video Intro Screen -->
         <div id="videoIntro" class="video-intro">
             <div class="intro-message">
-                <h2>Whilst we wait for info, please enjoy this animated video of Pim</h2>
+                <h2>Enjoy this animated video of Pim whilst we wait</h2>
             </div>
             <div class="intro-video-container">
                 <img 
@@ -1017,10 +1027,10 @@
                 gif.style.display = 'block';
                 if (placeholder) placeholder.style.display = 'none';
                 
-                // Transition to player selection after 5 seconds
+                // Transition to player selection after 4.5 seconds
                 setTimeout(() => {
                     showPlayerSelection();
-                }, 5000); // 5 seconds as requested
+                }, 4500); // 4.5 seconds as requested
             }
         }
 
