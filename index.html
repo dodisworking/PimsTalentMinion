@@ -1218,6 +1218,34 @@
             'Pim': 1.0        // Normal weight
         };
 
+        // Test function to verify weight system is working
+        function testWeightSystem() {
+            console.log('=== TESTING WEIGHT SYSTEM ===');
+            console.log('Current votingWeights:', votingWeights);
+            
+            // Test with sample ratings
+            const testRatings = [
+                { name: 'Claire', rating: 'Yes' },
+                { name: 'Olivia', rating: 'No' },
+                { name: 'Fran', rating: 'Yes' },
+                { name: 'Victor', rating: 'No' },
+                { name: 'Lauren', rating: 'Maybe' },
+                { name: 'Pim', rating: 'Yes' }
+            ];
+            
+            const result = calculateTeamRating(testRatings);
+            console.log('Test result with normal weights:', result);
+            
+            // Test with extra weight for Claire
+            votingWeights['Claire'] = 2.0;
+            const resultWithExtraWeight = calculateTeamRating(testRatings);
+            console.log('Test result with Claire having 2x weight:', resultWithExtraWeight);
+            
+            // Reset Claire's weight
+            votingWeights['Claire'] = 1.0;
+            console.log('=== END WEIGHT SYSTEM TEST ===');
+        }
+
         // Initialize the application
         // Weight control functions
         function openWeightModal() {
@@ -1262,6 +1290,18 @@
                     
                     // Update voting weight
                     votingWeights[name] = weight;
+                    
+                    console.log('=== WEIGHT CHANGE DEBUG ===');
+                    console.log('Weight changed for', name, 'to', weight);
+                    console.log('Current votingWeights:', votingWeights);
+                    console.log('=== END WEIGHT CHANGE DEBUG ===');
+                    
+                    // Instantly update all talent cards to reflect new weights
+                    updateTalentCards();
+                    
+                    // If a profile modal is open, refresh it with new weights
+                    console.log('About to call refreshOpenProfileModal...');
+                    refreshOpenProfileModal();
                 });
             });
             
@@ -1273,50 +1313,109 @@
         }
 
         function saveWeightSettings() {
+            console.log('=== SAVING WEIGHT SETTINGS ===');
+            console.log('Current votingWeights:', votingWeights);
+            
             // Settings are already saved in votingWeights object
             closeWeightModal();
             
-            // Refresh the display to show updated weights
-            if (teamViewMode) {
-                // If in team view, refresh the team ratings display
-                const currentTalentIndex = document.querySelector('.talent-card.active')?.dataset.talentIndex;
-                if (currentTalentIndex !== undefined) {
-                    showTeamView(parseInt(currentTalentIndex));
+            // If a profile modal is open, close it and reopen it with new weights
+            const openModal = document.querySelector('.modal');
+            if (openModal) {
+                const talentIndex = openModal.dataset.talentIndex;
+                if (talentIndex !== undefined) {
+                    // Close current modal
+                    openModal.remove();
+                    // Reopen with new weights
+                    showProfile(parseInt(talentIndex));
                 }
             }
+            
+            console.log('=== WEIGHT SETTINGS SAVED ===');
         }
 
-        // Update calculateTeamRating to use voting weights
+        // Recalculate all team votes with current weights
+        function recalculateAllTeamVotes() {
+            console.log('=== RECALCULATING ALL TEAM VOTES ===');
+            console.log('Using votingWeights:', votingWeights);
+            
+            talentData.forEach((talent, index) => {
+                const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
+                
+                const ratings = [
+                    { name: 'Claire', rating: claireRating, notes: claireNotes },
+                    { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
+                    { name: 'Fran', rating: franRating, notes: franNotes },
+                    { name: 'Victor', rating: victorRating, notes: victorNotes },
+                    { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
+                    { name: 'Pim', rating: pimRating, notes: pimNotes }
+                ];
+                
+                const newTeamRating = calculateTeamRating(ratings);
+                console.log(`Talent ${index} (${name}): ${newTeamRating}`);
+            });
+            
+            console.log('=== ALL TEAM VOTES RECALCULATED ===');
+        }
+
+        // Update calculateTeamRating to use voting weights and exclude empty votes
         function calculateTeamRating(ratings) {
             let yesWeight = 0;
             let noWeight = 0;
             let maybeWeight = 0;
             
+            console.log('=== Weight Calculation Debug ===');
+            console.log('Current votingWeights:', votingWeights);
+            console.log('Input ratings:', ratings);
+            
             ratings.forEach(rating => {
-                const weight = votingWeights[rating.name] || 1.0;
-                
-                if (rating.rating === 'Yes') {
-                    yesWeight += weight;
-                } else if (rating.rating === 'No') {
-                    noWeight += weight;
-                } else if (rating.rating === 'Maybe') {
-                    maybeWeight += weight;
+                // Only count votes that are not empty, null, or undefined
+                if (rating.rating && rating.rating.trim() !== '') {
+                    const weight = votingWeights[rating.name] || 1.0;
+                    console.log(`${rating.name}: ${rating.rating} (weight: ${weight})`);
+                    
+                    if (rating.rating === 'Yes') {
+                        yesWeight += weight;
+                    } else if (rating.rating === 'No') {
+                        noWeight += weight;
+                    } else if (rating.rating === 'Maybe') {
+                        maybeWeight += weight;
+                    }
+                } else {
+                    console.log(`${rating.name}: No vote (empty/null)`);
                 }
             });
             
-            if (yesWeight > noWeight && yesWeight > maybeWeight) {
-                return 'Certified Yes';
-            } else if (noWeight > yesWeight && noWeight > maybeWeight) {
-                return 'Certified No';
-            } else if (maybeWeight > yesWeight && maybeWeight > noWeight) {
-                return 'Certified Maybe';
-            } else {
-                return 'Split Decision';
+            console.log(`Final weights - Yes: ${yesWeight}, No: ${noWeight}, Maybe: ${maybeWeight}`);
+            
+            // If no one has voted, return 'No Votes'
+            if (yesWeight === 0 && noWeight === 0 && maybeWeight === 0) {
+                console.log('Final result: No Votes');
+                console.log('=== End Weight Calculation ===');
+                return 'No Votes';
             }
+            
+            let result;
+            if (yesWeight > noWeight && yesWeight > maybeWeight) {
+                result = 'Certified Yes';
+            } else if (noWeight > yesWeight && noWeight > maybeWeight) {
+                result = 'Certified No';
+            } else if (maybeWeight > yesWeight && maybeWeight > noWeight) {
+                result = 'Certified Maybe';
+            } else {
+                result = 'Split Decision';
+            }
+            
+            console.log('Final result:', result);
+            console.log('=== End Weight Calculation ===');
+            
+            return result;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
+            // Test the weight system on page load
+            testWeightSystem();
             // Start with video intro
             showVideoIntro();
         });
@@ -1419,7 +1518,7 @@
         }
 
         // Configuration
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5yrdMgfuiFHk2NObJveLV831pylIZKWQmqCTS3895xBbJ31Y6gK78cTA7N37tS3IOgw/exec';
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWiprP0Q4bkIGvEWBhYZro91GzYUpko5NXAyeNTyQZ4pbJ4vD-xOx-YIzEPUHL9PS7QA/exec';
 
         // Load talent data from Google Sheets
         function loadTalentData() {
@@ -1561,6 +1660,9 @@
                 const talentCountry = talent[5] || '';
                 const averageRating = talent[10] || '';
                 const certifiedStatus = getCertifiedStatus(talent).status;
+                
+                // Get current user's rating for this talent
+                const currentUserRating = selectedUser ? getUserRating(talent, selectedUser) : '';
 
                 return (
                     (searchName === '' || talentName.toLowerCase().includes(searchName.toLowerCase())) &&
@@ -1569,7 +1671,7 @@
                     (gender === '' || talentGender === gender) &&
                     (ethnicity === '' || talentEthnicity === ethnicity) &&
                     (country === '' || talentCountry === country) &&
-                    (rating === '' || averageRating === rating) &&
+                    (rating === '' || currentUserRating === rating) &&
                     (teamRating === '' || certifiedStatus === teamRating)
                 );
             });
@@ -1621,6 +1723,7 @@
 
         // Update the talent cards display
         function updateTalentCards() {
+            console.log('updateTalentCards called');
             const grid = document.getElementById('talentGrid');
             const noTalent = document.getElementById('noTalent');
 
@@ -1634,6 +1737,7 @@
             noTalent.style.display = 'none';
 
             grid.innerHTML = filteredData.map((talent, index) => createTalentCard(talent, index)).join('');
+            console.log('Talent cards updated');
         }
 
         // Get emoji for role type
@@ -1701,7 +1805,8 @@
                 { name: 'Olivia', rating: oliviaRating },
                 { name: 'Fran', rating: franRating },
                 { name: 'Victor', rating: victorRating },
-                { name: 'Lauren', rating: laurenRating }
+                { name: 'Lauren', rating: laurenRating },
+                { name: 'Pim', rating: pimRating }
             ];
 
             const currentUserRating = selectedUser ? ratings.find(r => r.name === selectedUser)?.rating || '' : '';
@@ -1789,8 +1894,34 @@
         }
 
         // Show talent profile in a modal
-        function showProfile(index) {
-            const talent = filteredData[index];
+        async function showProfile(index) {
+            // Refresh data from Google Sheets before showing profile
+            console.log('Refreshing data from Google Sheets...');
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'getTalentData'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        talentData = data.data;
+                        filteredData = [...talentData];
+                        console.log('Data refreshed successfully');
+                    }
+                }
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+            }
+            
+            // Use talentData instead of filteredData to ensure we get the most current data
+            const talent = talentData[index];
             const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
 
             const ratings = [
@@ -1803,6 +1934,7 @@
             ];
 
             const modal = document.createElement('div');
+            modal.dataset.talentIndex = index; // Store talent index for refresh
             modal.style.cssText = `
                 position: fixed;
                 top: 0;
@@ -1849,14 +1981,24 @@
                         <p style="color: #94a3b8; font-size: 1.2rem;">${getRoleEmoji(role)} ${role || 'No Role'}</p>
                         
                         <!-- Team Vote Status -->
-                        <div style="margin: 20px 0;">
+                        <div style="margin: 20px 0;" data-team-vote>
                             ${(() => {
-                                const certifiedStatus = getCertifiedStatus(talent);
+                                console.log('=== PROFILE MODAL WEIGHT CALCULATION ===');
+                                console.log('Current votingWeights:', votingWeights);
+                                console.log('Ratings for', name, ':', ratings);
+                                
+                                // Force refresh of votingWeights to ensure we have the latest
+                                console.log('Forcing weight calculation with current weights...');
+                                const teamRating = calculateTeamRating(ratings);
+                                console.log('Profile modal teamRating:', teamRating);
+                                console.log('=== END PROFILE MODAL CALCULATION ===');
+                                
                                 const statusColors = {
-                                    'certified-yes': 'linear-gradient(135deg, #10b981, #059669)',
-                                    'certified-no': 'linear-gradient(135deg, #ef4444, #dc2626)',
-                                    'certified-maybe': 'linear-gradient(135deg, #f59e0b, #d97706)',
-                                    'uncertain': 'linear-gradient(135deg, #6b7280, #4b5563)'
+                                    'Certified Yes': 'linear-gradient(135deg, #10b981, #059669)',
+                                    'Certified No': 'linear-gradient(135deg, #ef4444, #dc2626)',
+                                    'Certified Maybe': 'linear-gradient(135deg, #f59e0b, #d97706)',
+                                    'Split Decision': 'linear-gradient(135deg, #6b7280, #4b5563)',
+                                    'No Votes': 'linear-gradient(135deg, #9ca3af, #6b7280)'
                                 };
                                 return `
                                     <div style="
@@ -1865,13 +2007,13 @@
                                         gap: 8px;
                                         padding: 12px 24px;
                                         border-radius: 15px;
-                                        background: ${statusColors[certifiedStatus.status]};
+                                        background: ${statusColors[teamRating]};
                                         color: white;
                                         font-weight: 700;
                                         font-size: 1.1rem;
                                         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
                                     ">
-                                        ${certifiedStatus.icon} ${certifiedStatus.text}
+                                        ${getStatusEmoji(teamRating)} ${teamRating}
                                     </div>
                                 `;
                             })()}
@@ -1889,7 +2031,7 @@
                     
                      ${link ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${link}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600;">View Casting Link</a></div>` : ''}
                     
-                    <div style="border-top: 1px solid rgba(59, 130, 246, 0.2); padding-top: 20px;">
+                    <div style="border-top: 1px solid rgba(59, 130, 246, 0.2); padding-top: 20px;" data-team-ratings>
                         <h3 style="color: #60a5fa; margin-bottom: 15px;">Team Ratings & Notes</h3>
                         ${ratings.map(r => {
                             const userProfilePic = profilePictures[r.name] || 'https://via.placeholder.com/30x30?text=' + r.name.charAt(0);
@@ -1938,6 +2080,183 @@
             modal.onclick = (e) => {
                 if (e.target === modal) modal.remove();
             };
+        }
+
+        // Refresh open profile modal with new weights
+        function refreshOpenProfileModal() {
+            console.log('=== REFRESH OPEN PROFILE MODAL ===');
+            const openModal = document.querySelector('.modal');
+            console.log('Open modal found:', openModal);
+            if (!openModal) {
+                console.log('No modal is open');
+                return; // No modal is open
+            }
+            
+            // Find the talent index from the modal
+            const talentIndex = openModal.dataset.talentIndex;
+            console.log('Talent index:', talentIndex);
+            if (talentIndex === undefined) {
+                console.log('No talent index found');
+                return;
+            }
+            
+            console.log('Updating profile modal for talent index:', talentIndex);
+            
+            // Show popup animation
+            showWeightUpdatePopup();
+            
+            // Update the team vote display immediately with new weights
+            setTimeout(() => {
+                updateTeamVoteDisplay(openModal, parseInt(talentIndex));
+                hideWeightUpdatePopup();
+            }, 500); // Short delay for popup animation
+            console.log('=== END REFRESH OPEN PROFILE MODAL ===');
+        }
+
+        // Update team vote display with current weights
+        function updateTeamVoteDisplay(modal, talentIndex) {
+            const talent = talentData[talentIndex];
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
+
+            const ratings = [
+                { name: 'Claire', rating: claireRating, notes: claireNotes },
+                { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
+                { name: 'Fran', rating: franRating, notes: franNotes },
+                { name: 'Victor', rating: victorRating, notes: victorNotes },
+                { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
+                { name: 'Pim', rating: pimRating, notes: pimNotes }
+            ];
+
+            // Calculate new team rating with updated weights
+            console.log('=== UPDATING TEAM VOTE DISPLAY ===');
+            console.log('Current votingWeights:', votingWeights);
+            console.log('Ratings being calculated:', ratings);
+            const teamRating = calculateTeamRating(ratings);
+            console.log('New team rating:', teamRating);
+            console.log('=== END TEAM VOTE DISPLAY UPDATE ===');
+            
+            // Find and update the team vote status element
+            const teamVoteElement = modal.querySelector('[data-team-vote]');
+            console.log('Team vote element found:', teamVoteElement);
+            if (teamVoteElement) {
+                const statusColors = {
+                    'Certified Yes': 'linear-gradient(135deg, #10b981, #059669)',
+                    'Certified No': 'linear-gradient(135deg, #ef4444, #dc2626)',
+                    'Certified Maybe': 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    'Split Decision': 'linear-gradient(135deg, #6b7280, #4b5563)',
+                    'No Votes': 'linear-gradient(135deg, #9ca3af, #6b7280)'
+                };
+                
+                teamVoteElement.innerHTML = `
+                    <div style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 12px 24px;
+                        border-radius: 15px;
+                        background: ${statusColors[teamRating]};
+                        color: white;
+                        font-weight: 700;
+                        font-size: 1.1rem;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                    ">
+                        ${getStatusEmoji(teamRating)} ${teamRating}
+                    </div>
+                `;
+                
+                console.log('Team vote updated to:', teamRating);
+            }
+        }
+
+        // Show weight update popup animation
+        function showWeightUpdatePopup() {
+            // Remove existing popup if any
+            const existingPopup = document.getElementById('weightUpdatePopup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+            
+            const popup = document.createElement('div');
+            popup.id = 'weightUpdatePopup';
+            popup.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                color: white;
+                padding: 20px 30px;
+                border-radius: 15px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                animation: popupSlideIn 0.3s ease-out;
+            `;
+            
+            popup.innerHTML = `
+                <span style="animation: spin 1s linear infinite;">🏃‍♂️</span>
+                <span>Updating Team Ratings...</span>
+            `;
+            
+            // Add CSS animation if not exists
+            if (!document.getElementById('popupAnimations')) {
+                const style = document.createElement('style');
+                style.id = 'popupAnimations';
+                style.textContent = `
+                    @keyframes popupSlideIn {
+                        from {
+                            opacity: 0;
+                            transform: translate(-50%, -60%);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translate(-50%, -50%);
+                        }
+                    }
+                    @keyframes popupSlideOut {
+                        from {
+                            opacity: 1;
+                            transform: translate(-50%, -50%);
+                        }
+                        to {
+                            opacity: 0;
+                            transform: translate(-50%, -40%);
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            document.body.appendChild(popup);
+        }
+
+        // Hide weight update popup animation
+        function hideWeightUpdatePopup() {
+            const popup = document.getElementById('weightUpdatePopup');
+            if (popup) {
+                popup.style.animation = 'popupSlideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.remove();
+                    }
+                }, 300);
+            }
+        }
+
+        // Get emoji for status
+        function getStatusEmoji(status) {
+            const statusEmojis = {
+                'Certified Yes': '✅',
+                'Certified No': '❌',
+                'Certified Maybe': '🤔',
+                'Split Decision': '⚖️',
+                'No Votes': '⏳'
+            };
+            return statusEmojis[status] || '❓';
         }
 
         // Format Google Drive image URL for public access
@@ -2004,9 +2323,20 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Rating update response:', data);
                     if (data.success) {
-                        console.log('Rating saved successfully');
+                        console.log('Rating saved successfully, updating local data...');
+                        
+                        // Update local talentData immediately
+                        updateLocalTalentData(index, selectedUser, rating);
+                        
+                        // Refresh data and update team ratings
+                        refreshDataAndUpdateDisplay();
+                        
+                        // Update any open profile modal
+                        updateOpenProfileModal();
                     } else {
+                        console.log('Rating save failed:', data.error);
                         // Revert visual state on error
                         updateRatingButtonsVisual(index, '');
                         alert('Error updating rating: ' + data.error);
@@ -2018,6 +2348,118 @@
                     updateRatingButtonsVisual(index, '');
                     alert('Error updating rating. Please try again.');
                 });
+            }
+        }
+
+        // Update local talentData immediately after voting
+        function updateLocalTalentData(index, user, rating) {
+            if (!talentData[index]) return;
+            
+            // Map user names to column indices
+            const userColumnMap = {
+                'Claire': 11,  // Column L
+                'Olivia': 12,  // Column M
+                'Fran': 13,    // Column N
+                'Victor': 14,  // Column O
+                'Lauren': 15,  // Column P
+                'Pim': 21      // Column V
+            };
+            
+            const columnIndex = userColumnMap[user];
+            if (columnIndex !== undefined) {
+                talentData[index][columnIndex] = rating;
+                console.log(`Updated local data: ${user} rating for talent ${index} = ${rating}`);
+            }
+        }
+
+        // Update any open profile modal with fresh data
+        function updateOpenProfileModal() {
+            const openModal = document.querySelector('.modal');
+            if (!openModal) return; // No modal is open
+            
+            const talentIndex = openModal.dataset.talentIndex;
+            if (talentIndex === undefined) return;
+            
+            // Update the team vote display
+            updateTeamVoteDisplay(openModal, parseInt(talentIndex));
+            
+            // Update individual team member ratings display
+            updateTeamMemberRatings(openModal, parseInt(talentIndex));
+        }
+
+        // Update team member ratings display in profile modal
+        function updateTeamMemberRatings(modal, talentIndex) {
+            const talent = talentData[talentIndex];
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
+
+            const ratings = [
+                { name: 'Claire', rating: claireRating, notes: claireNotes },
+                { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
+                { name: 'Fran', rating: franRating, notes: franNotes },
+                { name: 'Victor', rating: victorRating, notes: victorNotes },
+                { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
+                { name: 'Pim', rating: pimRating, notes: pimNotes }
+            ];
+
+            // Find and update the team ratings section
+            const teamRatingsSection = modal.querySelector('[data-team-ratings]');
+            if (teamRatingsSection) {
+                teamRatingsSection.innerHTML = ratings.map(r => {
+                    const userProfilePic = profilePictures[r.name] || 'https://via.placeholder.com/30x30?text=' + r.name.charAt(0);
+                    return `
+                        <div style="margin-bottom: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="${userProfilePic}" alt="${r.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">
+                                    <strong style="color: #f8fafc;">${r.name}</strong>
+                                </div>
+                                <span style="
+                                    padding: 4px 12px; 
+                                    border-radius: 20px; 
+                                    font-size: 0.8rem; 
+                                    font-weight: 600;
+                                    ${r.rating === 'Yes' ? 'background: #10b981; color: white;' : ''}
+                                    ${r.rating === 'No' ? 'background: #ef4444; color: white;' : ''}
+                                    ${r.rating === 'Maybe' ? 'background: #f59e0b; color: white;' : ''}
+                                    ${!r.rating ? 'background: #374151; color: #9ca3af;' : ''}
+                                ">${r.rating || 'No Rating'}</span>
+                            </div>
+                            ${r.notes ? `<div style="color: #cbd5e1; font-size: 0.9rem;">${r.notes}</div>` : '<div style="color: #6b7280; font-size: 0.9rem; font-style: italic;">No notes</div>'}
+                        </div>
+                    `;
+                }).join('');
+                
+                console.log('Team member ratings updated in profile modal');
+            }
+        }
+
+        // Refresh data from Google Sheets and update display
+        async function refreshDataAndUpdateDisplay() {
+            try {
+                console.log('Refreshing data after rating update...');
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'getTalentData'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        talentData = data.data;
+                        filteredData = [...talentData];
+                        console.log('Data refreshed successfully after rating update');
+                        // Update the talent cards to show new team ratings
+                        updateTalentCards();
+                        console.log('Team ratings updated on talent cards');
+                    }
+                }
+            } catch (error) {
+                console.error('Error refreshing data after rating update:', error);
             }
         }
 
