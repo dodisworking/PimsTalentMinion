@@ -51,6 +51,178 @@
             font-weight: 500;
         }
 
+        .weight-control-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .weight-control-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .weight-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .weight-modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .weight-modal h2 {
+            color: #60a5fa;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+        }
+
+        .weight-control-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 18px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            min-height: 70px;
+            transition: all 0.3s ease;
+        }
+
+        .weight-control-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .weight-control-item .person-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .weight-control-item img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #3b82f6;
+            margin-right: 12px;
+        }
+
+        .weight-control-item .name {
+            color: #f8fafc;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .weight-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            flex-shrink: 0;
+            min-width: 180px;
+        }
+
+        .weight-option {
+            padding: 12px 8px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+        }
+
+        .weight-option:hover {
+            border-color: #60a5fa;
+            transform: translateY(-2px);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .weight-option.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #60a5fa;
+            color: #60a5fa;
+            box-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
+        }
+
+        .weight-option.extra.active {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .weight-option.normal.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .weight-option.ignore.active {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .weight-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .weight-modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .weight-save-btn {
+            background: #10b981;
+            color: white;
+        }
+
+        .weight-cancel-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .weight-modal-btn:hover {
+            transform: translateY(-2px);
+        }
+
         .controls {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
@@ -282,20 +454,40 @@
         .filter-group input,
         .filter-group select {
             padding: 12px 16px;
-            border: 2px solid #374151;
+            border: 1px solid rgba(59, 130, 246, 0.4);
             border-radius: 12px;
-            font-size: 14px;
-            background: rgba(15, 23, 42, 0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: rgba(15, 23, 42, 0.9);
             color: #f8fafc;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
         }
 
         .filter-group input:focus,
         .filter-group select:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            background: rgba(15, 23, 42, 0.95);
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+            background: rgba(15, 23, 42, 1);
+        }
+
+        .filter-group select:hover {
+            border-color: #60a5fa;
+            background: rgba(15, 23, 42, 1);
+        }
+
+        .filter-group select option {
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 12px;
+            font-weight: 500;
         }
 
         .filter-group input::placeholder {
@@ -886,6 +1078,7 @@
                         <span id="currentUserName">Selected User</span>
                         <button onclick="changeUser()" class="change-user-btn">Change User</button>
                     </div>
+                    <button id="weightControlBtn" class="weight-control-btn">⚖️ Weight Control</button>
                 </div>
 
                 <div class="filters-container">
@@ -986,6 +1179,18 @@
         </div>
     </div>
 
+    <!-- Weight Control Modal -->
+    <div id="weightModal" class="weight-modal">
+        <div class="weight-modal-content">
+            <h2>⚖️ Voting Weights</h2>
+            <div id="weightControls"></div>
+            <div class="weight-modal-buttons">
+                <button id="weightSaveBtn" class="weight-modal-btn weight-save-btn">Save Settings</button>
+                <button id="weightCancelBtn" class="weight-modal-btn weight-cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global variables
         let talentData = [];
@@ -997,12 +1202,119 @@
         const profilePictures = {
             'Claire': 'claire.jpeg',
             'Olivia': 'olivia.jpeg', 
-            'Fran': 'https://via.placeholder.com/40x40?text=F',
-            'Victor': 'https://via.placeholder.com/40x40?text=V',
-            'Lauren': 'https://via.placeholder.com/40x40?text=L'
+            'Fran': 'Francesca .jpeg',
+            'Victor': 'Victor.jpeg',
+            'Lauren': 'Lauren Cotsa.jpeg',
+            'Pim': 'Pim.jpeg'
+        };
+
+        // Voting weights system
+        let votingWeights = {
+            'Claire': 1.0,    // Normal weight
+            'Olivia': 1.0,    // Normal weight
+            'Fran': 1.0,      // Normal weight
+            'Victor': 1.0,    // Normal weight
+            'Lauren': 1.0,    // Normal weight
+            'Pim': 1.0        // Normal weight
         };
 
         // Initialize the application
+        // Weight control functions
+        function openWeightModal() {
+            const modal = document.getElementById('weightModal');
+            const controlsContainer = document.getElementById('weightControls');
+            
+            // Clear existing controls
+            controlsContainer.innerHTML = '';
+            
+            // Create weight controls for each team member
+            Object.keys(profilePictures).forEach(name => {
+                const currentWeight = votingWeights[name];
+                const weightItem = document.createElement('div');
+                weightItem.className = 'weight-control-item';
+                weightItem.innerHTML = `
+                    <div class="person-info">
+                        <img src="${profilePictures[name]}" alt="${name}" onerror="this.src='https://via.placeholder.com/50x50?text=${name.charAt(0)}'">
+                        <span class="name">${name}</span>
+                    </div>
+                    <div class="weight-options">
+                        <div class="weight-option extra ${currentWeight === 2.0 ? 'active' : ''}" data-weight="2.0" data-name="${name}">🟢 Extra</div>
+                        <div class="weight-option normal ${currentWeight === 1.0 ? 'active' : ''}" data-weight="1.0" data-name="${name}">⚪ Normal</div>
+                        <div class="weight-option ignore ${currentWeight === 0.0 ? 'active' : ''}" data-weight="0.0" data-name="${name}">🔴 Ignore</div>
+                    </div>
+                `;
+                controlsContainer.appendChild(weightItem);
+            });
+            
+            // Add click listeners to weight options
+            controlsContainer.querySelectorAll('.weight-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const name = this.dataset.name;
+                    const weight = parseFloat(this.dataset.weight);
+                    
+                    // Remove active class from all options for this person
+                    controlsContainer.querySelectorAll(`[data-name="${name}"]`).forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    
+                    // Update voting weight
+                    votingWeights[name] = weight;
+                });
+            });
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeWeightModal() {
+            document.getElementById('weightModal').style.display = 'none';
+        }
+
+        function saveWeightSettings() {
+            // Settings are already saved in votingWeights object
+            closeWeightModal();
+            
+            // Refresh the display to show updated weights
+            if (teamViewMode) {
+                // If in team view, refresh the team ratings display
+                const currentTalentIndex = document.querySelector('.talent-card.active')?.dataset.talentIndex;
+                if (currentTalentIndex !== undefined) {
+                    showTeamView(parseInt(currentTalentIndex));
+                }
+            }
+        }
+
+        // Update calculateTeamRating to use voting weights
+        function calculateTeamRating(ratings) {
+            let yesWeight = 0;
+            let noWeight = 0;
+            let maybeWeight = 0;
+            
+            ratings.forEach(rating => {
+                const weight = votingWeights[rating.name] || 1.0;
+                
+                if (rating.rating === 'Yes') {
+                    yesWeight += weight;
+                } else if (rating.rating === 'No') {
+                    noWeight += weight;
+                } else if (rating.rating === 'Maybe') {
+                    maybeWeight += weight;
+                }
+            });
+            
+            if (yesWeight > noWeight && yesWeight > maybeWeight) {
+                return 'Certified Yes';
+            } else if (noWeight > yesWeight && noWeight > maybeWeight) {
+                return 'Certified No';
+            } else if (maybeWeight > yesWeight && maybeWeight > noWeight) {
+                return 'Certified Maybe';
+            } else {
+                return 'Split Decision';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
             // Start with video intro
@@ -1044,7 +1356,7 @@
         // Populate profile options with pictures
         function populateProfileOptions() {
             const profileOptionsContainer = document.getElementById('profileOptions');
-            const users = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren'];
+            const users = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'];
             
             // Clear existing content first
             profileOptionsContainer.innerHTML = '';
@@ -1099,10 +1411,15 @@
             filterInputs.forEach(id => {
                 document.getElementById(id).addEventListener('input', filterTalent);
             });
+            
+            // Weight control
+            document.getElementById('weightControlBtn').addEventListener('click', openWeightModal);
+            document.getElementById('weightSaveBtn').addEventListener('click', saveWeightSettings);
+            document.getElementById('weightCancelBtn').addEventListener('click', closeWeightModal);
         }
 
         // Configuration
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSEVCXE0GTxuBpP7AitGVYCYkpGCFytqq5Iu9zf445nzqLzV5ELSyAEBarkaQWZq3_Ig/exec';
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5yrdMgfuiFHk2NObJveLV831pylIZKWQmqCTS3895xBbJ31Y6gK78cTA7N37tS3IOgw/exec';
 
         // Load talent data from Google Sheets
         function loadTalentData() {
@@ -1377,7 +1694,7 @@
 
         // Create a talent card
         function createTalentCard(talent, index) {
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes] = talent;
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
 
             const ratings = [
                 { name: 'Claire', rating: claireRating },
@@ -1420,7 +1737,7 @@
                             </div>
                         </div>
 
-                        ${link ? `<div class="link-handle"><a href="${link}" target="_blank">View Profile</a></div>` : ''}
+                         ${link ? `<div class="link-handle"><a href="${link}" target="_blank">View Casting Link</a></div>` : ''}
 
                         <div class="rating-controls">
                             <div class="rating-buttons">
@@ -1474,14 +1791,15 @@
         // Show talent profile in a modal
         function showProfile(index) {
             const talent = filteredData[index];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes] = talent;
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
 
             const ratings = [
                 { name: 'Claire', rating: claireRating, notes: claireNotes },
                 { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
                 { name: 'Fran', rating: franRating, notes: franNotes },
                 { name: 'Victor', rating: victorRating, notes: victorNotes },
-                { name: 'Lauren', rating: laurenRating, notes: laurenNotes }
+                { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
+                { name: 'Pim', rating: pimRating, notes: pimNotes }
             ];
 
             const modal = document.createElement('div');
@@ -1569,7 +1887,7 @@
                         <div><strong style="color: #60a5fa;">Country:</strong> <span style="color: #cbd5e1;">${country || 'N/A'}</span></div>
                     </div>
                     
-                    ${link ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${link}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600;">View Profile</a></div>` : ''}
+                     ${link ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${link}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600;">View Casting Link</a></div>` : ''}
                     
                     <div style="border-top: 1px solid rgba(59, 130, 246, 0.2); padding-top: 20px;">
                         <h3 style="color: #60a5fa; margin-bottom: 15px;">Team Ratings & Notes</h3>
@@ -1870,7 +2188,7 @@
                 'Maybe': 0
             };
             
-            const users = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren'];
+            const users = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'];
             users.forEach(user => {
                 const userRating = getUserRating(talent, user);
                 if (userRating && votes.hasOwnProperty(userRating)) {
@@ -1895,19 +2213,29 @@
 
         // Get user rating for a talent
         function getUserRating(talent, user) {
-            const userIndex = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren'].indexOf(user);
+            const userIndex = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'].indexOf(user);
             if (userIndex === -1) return null;
             
-            const ratingColumn = 11 + userIndex; // Columns L-P (11-15)
+            let ratingColumn;
+            if (user === 'Pim') {
+                ratingColumn = 21; // Column V (22-1 for 0-based)
+            } else {
+                ratingColumn = 11 + userIndex; // Columns L-P (11-15)
+            }
             return talent[ratingColumn] || '';
         }
 
         // Get user notes for a talent
         function getUserNotes(talent, user) {
-            const userIndex = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren'].indexOf(user);
+            const userIndex = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'].indexOf(user);
             if (userIndex === -1) return '';
             
-            const notesColumn = 16 + userIndex; // Columns Q-U (16-20)
+            let notesColumn;
+            if (user === 'Pim') {
+                notesColumn = 22; // Column W (23-1 for 0-based)
+            } else {
+                notesColumn = 16 + userIndex; // Columns Q-U (16-20)
+            }
             return talent[notesColumn] || '';
         }
 
