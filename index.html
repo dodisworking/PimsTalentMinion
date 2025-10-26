@@ -1249,8 +1249,16 @@
         // Initialize the application
         // Weight control functions
         function openWeightModal() {
+            console.log('=== OPENING WEIGHT MODAL ===');
             const modal = document.getElementById('weightModal');
             const controlsContainer = document.getElementById('weightControls');
+            
+            if (!modal || !controlsContainer) {
+                console.error('Weight modal elements not found!');
+                return;
+            }
+            
+            console.log('Current votingWeights:', votingWeights);
             
             // Clear existing controls
             controlsContainer.innerHTML = '';
@@ -1258,6 +1266,8 @@
             // Create weight controls for each team member
             Object.keys(profilePictures).forEach(name => {
                 const currentWeight = votingWeights[name];
+                console.log(`Creating controls for ${name} with weight ${currentWeight}`);
+                
                 const weightItem = document.createElement('div');
                 weightItem.className = 'weight-control-item';
                 weightItem.innerHTML = `
@@ -1275,10 +1285,16 @@
             });
             
             // Add click listeners to weight options
-            controlsContainer.querySelectorAll('.weight-option').forEach(option => {
+            const weightOptions = controlsContainer.querySelectorAll('.weight-option');
+            console.log(`Added ${weightOptions.length} weight option listeners`);
+            
+            weightOptions.forEach(option => {
                 option.addEventListener('click', function() {
+                    console.log('=== WEIGHT OPTION CLICKED ===');
                     const name = this.dataset.name;
                     const weight = parseFloat(this.dataset.weight);
+                    
+                    console.log(`Clicked: ${name} -> ${weight}`);
                     
                     // Remove active class from all options for this person
                     controlsContainer.querySelectorAll(`[data-name="${name}"]`).forEach(opt => {
@@ -1296,16 +1312,29 @@
                     console.log('Current votingWeights:', votingWeights);
                     console.log('=== END WEIGHT CHANGE DEBUG ===');
                     
+                    // Save weight to Google Sheets instantly
+                    const weightText = weight === 2.0 ? 'Extra Weight' : weight === 0.0 ? 'Ignore' : 'Normal';
+                    updateWeightInGoogleSheets(selectedUser, name, weightText);
+                    
+                    // Show popup animation
+                    showWeightUpdatePopup();
+                    
                     // Instantly update all talent cards to reflect new weights
                     updateTalentCards();
                     
                     // If a profile modal is open, refresh it with new weights
                     console.log('About to call refreshOpenProfileModal...');
                     refreshOpenProfileModal();
+                    
+                    // Hide popup after updates
+                    setTimeout(() => {
+                        hideWeightUpdatePopup();
+                    }, 1000);
                 });
             });
             
             modal.style.display = 'flex';
+            console.log('=== WEIGHT MODAL OPENED ===');
         }
 
         function closeWeightModal() {
@@ -1315,6 +1344,13 @@
         function saveWeightSettings() {
             console.log('=== SAVING WEIGHT SETTINGS ===');
             console.log('Current votingWeights:', votingWeights);
+            
+            // Save all weights to Google Sheets
+            Object.keys(votingWeights).forEach(targetUser => {
+                const weight = votingWeights[targetUser];
+                const weightText = weight === 2.0 ? 'Extra Weight' : weight === 0.0 ? 'Ignore' : 'Normal';
+                updateWeightInGoogleSheets(selectedUser, targetUser, weightText);
+            });
             
             // Settings are already saved in votingWeights object
             closeWeightModal();
@@ -1332,6 +1368,41 @@
             }
             
             console.log('=== WEIGHT SETTINGS SAVED ===');
+        }
+
+        // Update weight in Google Sheets
+        async function updateWeightInGoogleSheets(currentUser, targetUser, weight) {
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=updateWeight&currentUser=${encodeURIComponent(currentUser)}&targetUser=${encodeURIComponent(targetUser)}&weight=${encodeURIComponent(weight)}`
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log(`Weight updated in Google Sheets: ${currentUser} -> ${targetUser} = ${weight}`);
+                } else {
+                    console.error('Error updating weight in Google Sheets:', result.error);
+                }
+            } catch (error) {
+                console.error('Error updating weight in Google Sheets:', error);
+            }
+        }
+
+        // Helper function to get weight badge HTML
+        function getWeightBadge(name) {
+            const weight = votingWeights[name];
+            if (weight === 2.0) {
+                return '<span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; margin-left: 8px;">🟢 EXTRA WEIGHT</span>';
+            }
+            if (weight === 0.0) {
+                return '<span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; margin-left: 8px;">🔴 IGNORED</span>';
+            }
+            return ''; // No badge for normal weight (1.0)
         }
 
         // Recalculate all team votes with current weights
@@ -1371,7 +1442,16 @@
             ratings.forEach(rating => {
                 // Only count votes that are not empty, null, or undefined
                 if (rating.rating && rating.rating.trim() !== '') {
-                    const weight = votingWeights[rating.name] || 1.0;
+                    const weight = votingWeights[rating.name] ?? 1.0;
+                    
+                    // Skip votes with 0 weight (ignored)
+                    console.log(`Checking ${rating.name}: weight=${weight}, type=${typeof weight}, ===0: ${weight === 0}, ==0: ${weight == 0}`);
+                    if (weight === 0) {
+                        console.log(`🚫 ${rating.name}: ${rating.rating} (COMPLETELY IGNORED - weight 0)`);
+                        console.log(`   → This vote will NOT count towards team decision`);
+                        return; // Skip this vote entirely
+                    }
+                    
                     console.log(`${rating.name}: ${rating.rating} (weight: ${weight})`);
                     
                     if (rating.rating === 'Yes') {
@@ -1736,7 +1816,11 @@
             grid.style.display = 'grid';
             noTalent.style.display = 'none';
 
-            grid.innerHTML = filteredData.map((talent, index) => createTalentCard(talent, index)).join('');
+            grid.innerHTML = filteredData.map((talent, filteredIndex) => {
+                // Find the original index in talentData
+                const originalIndex = talentData.findIndex(originalTalent => originalTalent === talent);
+                return createTalentCard(talent, originalIndex);
+            }).join('');
             console.log('Talent cards updated');
         }
 
@@ -2041,6 +2125,7 @@
                                         <div style="display: flex; align-items: center; gap: 10px;">
                                             <img src="${userProfilePic}" alt="${r.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">
                                             <strong style="color: #f8fafc;">${r.name}</strong>
+                                            ${getWeightBadge(r.name)}
                                         </div>
                                         <span style="
                                             padding: 4px 12px; 
@@ -2412,6 +2497,7 @@
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <img src="${userProfilePic}" alt="${r.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">
                                     <strong style="color: #f8fafc;">${r.name}</strong>
+                                    ${getWeightBadge(r.name)}
                                 </div>
                                 <span style="
                                     padding: 4px 12px; 
