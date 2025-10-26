@@ -1,2813 +1,399 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pims Talent Minion</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            min-height: 100vh;
-            color: #f8fafc;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .header h1 {
-            color: #60a5fa;
-            font-size: 3rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-
-        .header .subtitle {
-            color: #94a3b8;
-            font-size: 1.3rem;
-            font-weight: 500;
-        }
-
-        .weight-control-btn {
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #60a5fa;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .weight-control-btn:hover {
-            background: rgba(59, 130, 246, 0.3);
-            border-color: rgba(59, 130, 246, 0.6);
-            transform: translateY(-2px);
-        }
-
-        .weight-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .weight-modal-content {
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 800px;
-            width: 95%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .weight-modal h2 {
-            color: #60a5fa;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.6rem;
-        }
-
-        .weight-control-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 18px;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            min-height: 70px;
-            transition: all 0.3s ease;
-        }
-
-        .weight-control-item:hover {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .weight-control-item .person-info {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-
-        .weight-control-item img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #3b82f6;
-            margin-right: 12px;
-        }
-
-        .weight-control-item .name {
-            color: #f8fafc;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .weight-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            flex-shrink: 0;
-            min-width: 180px;
-        }
-
-        .weight-option {
-            padding: 12px 8px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 10px;
-            background: rgba(15, 23, 42, 0.8);
-            color: #94a3b8;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-align: center;
-            position: relative;
-        }
-
-        .weight-option:hover {
-            border-color: #60a5fa;
-            transform: translateY(-2px);
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .weight-option.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: #60a5fa;
-            color: #60a5fa;
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
-        }
-
-        .weight-option.extra.active {
-            background: #10b981;
-            border-color: #10b981;
-        }
-
-        .weight-option.normal.active {
-            background: #3b82f6;
-            border-color: #3b82f6;
-        }
-
-        .weight-option.ignore.active {
-            background: #ef4444;
-            border-color: #ef4444;
-        }
-
-        .weight-modal-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .weight-modal-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .weight-save-btn {
-            background: #10b981;
-            color: white;
-        }
-
-        .weight-cancel-btn {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .weight-modal-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .controls {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .user-selector {
-            margin-bottom: 20px;
-        }
-
-        .user-selector label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #60a5fa;
-        }
-
-        .player-selection {
-            text-align: center;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 60px 40px;
-            border-radius: 20px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .selection-header {
-            margin-bottom: 40px;
-        }
-
-        .selection-header h2 {
-            color: #60a5fa;
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .selection-header p {
-            color: #94a3b8;
-            font-size: 1.2rem;
-        }
-
-        .profile-options {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .profile-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            padding: 25px 20px;
-            border: 2px solid #374151;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(15, 23, 42, 0.8);
-            color: #cbd5e1;
-            min-width: 120px;
-        }
-
-        .profile-option:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2);
-        }
-
-        .profile-option.selected {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-        }
-
-        .profile-pic {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #374151;
-        }
-
-        .profile-option:hover .profile-pic {
-            border-color: #3b82f6;
-        }
-
-        .profile-option.selected .profile-pic {
-            border-color: #3b82f6;
-        }
-
-        .user-info {
-            margin-bottom: 20px;
-        }
-
-        .current-user {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(15, 23, 42, 0.8);
-            padding: 15px 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .current-user-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #3b82f6;
-        }
-
-        .current-user span {
-            color: #60a5fa;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .change-user-btn {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            border: 1px solid #3b82f6;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .change-user-btn:hover {
-            background: rgba(59, 130, 246, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .team-view-btn {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border: 2px solid #10b981;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 10px;
-        }
-
-        .team-view-btn:hover {
-            background: rgba(16, 185, 129, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .team-view-btn.active {
-            background: #10b981;
-            color: white;
-        }
-
-        .filters-container {
-            margin-bottom: 30px;
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .filters-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(96, 165, 250, 0.1));
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .filters-header h3 {
-            margin: 0;
-            color: #60a5fa;
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .filters-grid {
-            padding: 25px;
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-width: 180px;
-        }
-
-        .search-group {
-            flex: 2;
-            min-width: 300px;
-        }
-
-        .filter-group label {
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #60a5fa;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .filter-group input,
-        .filter-group select {
-            padding: 12px 16px;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            background: rgba(15, 23, 42, 0.9);
-            color: #f8fafc;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-            padding-right: 40px;
-        }
-
-        .filter-group input:focus,
-        .filter-group select:focus {
-            outline: none;
-            border-color: #60a5fa;
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-            background: rgba(15, 23, 42, 1);
-        }
-
-        .filter-group select:hover {
-            border-color: #60a5fa;
-            background: rgba(15, 23, 42, 1);
-        }
-
-        .filter-group select option {
-            background: #0f172a;
-            color: #f8fafc;
-            padding: 12px;
-            font-weight: 500;
-        }
-
-        .filter-group input::placeholder {
-            color: #6b7280;
-        }
-
-        .role-filter-group {
-            flex: 2;
-            min-width: 300px;
-        }
-
-        .role-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .role-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            border: 2px solid #374151;
-            border-radius: 8px;
-            background: rgba(15, 23, 42, 0.8);
-            color: #cbd5e1;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .role-btn:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-        }
-
-        .role-btn.active {
-            border-color: #3b82f6;
-            background: #3b82f6;
-            color: white;
-        }
-
-        .talent-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .talent-card {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 0;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s ease;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .talent-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-            border-color: #3b82f6;
-        }
-
-        .talent-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .talent-content {
-            padding: 20px;
-        }
-
-        .talent-name {
-            color: #f8fafc;
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .talent-name:hover {
-            color: #60a5fa;
-        }
-
-        .talent-role {
-            color: #94a3b8;
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 15px;
-        }
-
-        .talent-details {
-            margin-bottom: 20px;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #60a5fa;
-        }
-
-        .detail-value {
-            color: #cbd5e1;
-        }
-
-        .link-handle {
-            margin-bottom: 15px;
-        }
-
-        .link-handle a {
-            color: #60a5fa;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .link-handle a:hover {
-            color: #93c5fd;
-            text-decoration: underline;
-        }
-
-        .rating-controls {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(59, 130, 246, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .rating-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .notes-icon-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .notes-icon-btn {
-            background: rgba(15, 23, 42, 0.8);
-            border: 2px solid #374151;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 16px;
-        }
-
-        .notes-icon-btn:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-            transform: scale(1.1);
-        }
-
-        .notes-indicator {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 12px;
-            height: 12px;
-            background: #3b82f6;
-            border-radius: 50%;
-            border: 2px solid rgba(15, 23, 42, 0.8);
-        }
-
-        .rating-btn {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #374151;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            background: rgba(15, 23, 42, 0.8);
-            color: #cbd5e1;
-        }
-
-        .rating-btn.yes {
-            border-color: #10b981;
-            color: #10b981;
-        }
-
-        .rating-btn.no {
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-
-        .rating-btn.maybe {
-            border-color: #f59e0b;
-            color: #f59e0b;
-        }
-
-        .rating-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .rating-btn.active {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: #3b82f6;
-            color: #60a5fa;
-        }
-
-        /* Specific vote colors for active states */
-        .rating-btn.yes.active {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-
-        .rating-btn.no.active {
-            background: #ef4444;
-            border-color: #ef4444;
-            color: white;
-        }
-
-        .rating-btn.maybe.active {
-            background: #f59e0b;
-            border-color: #f59e0b;
-            color: white;
-        }
-
-        .notes-section {
-            margin-top: 15px;
-        }
-
-        .notes-section label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #60a5fa;
-            font-size: 0.9rem;
-        }
-
-        .notes-textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #374151;
-            border-radius: 12px;
-            font-size: 14px;
-            resize: vertical;
-            min-height: 80px;
-            background: rgba(15, 23, 42, 0.8);
-            color: #f8fafc;
-            transition: all 0.3s;
-        }
-
-        .notes-textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .notes-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            margin-top: 8px;
-        }
-
-        .save-notes-btn, .cancel-notes-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .save-notes-btn {
-            background: #10b981;
-            color: white;
-        }
-
-        .save-notes-btn:hover {
-            background: #059669;
-            transform: translateY(-1px);
-        }
-
-        .save-notes-btn:disabled {
-            background: #6b7280;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .cancel-notes-btn {
-            background: #6b7280;
-            color: white;
-        }
-
-        .cancel-notes-btn:hover {
-            background: #4b5563;
-            transform: translateY(-1px);
-        }
-
-        .clear-filters-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-        }
-
-        .clear-filters-btn:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
-
-        /* Team View Styles */
-        .team-vote {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            border-radius: 8px;
-            margin: 4px 0;
-            font-size: 0.85rem;
-        }
-
-        .team-vote.yes {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid #10b981;
-            color: #10b981;
-        }
-
-        .team-vote.no {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid #ef4444;
-            color: #ef4444;
-        }
-
-        .team-vote.maybe {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid #f59e0b;
-            color: #f59e0b;
-        }
-
-        .team-vote.no-vote {
-            background: rgba(107, 114, 128, 0.1);
-            border: 1px solid #6b7280;
-            color: #6b7280;
-        }
-
-        .certified-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin: 10px 0;
-        }
-
-        .certified-status.certified-yes {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-
-        .certified-status.certified-no {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .certified-status.certified-maybe {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-        }
-
-        .certified-status.uncertain {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            color: white;
-        }
-
-        .team-notes {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid #374151;
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin: 4px 0;
-            font-size: 0.85rem;
-            color: #cbd5e1;
-        }
-
-        .team-notes-label {
-            font-weight: 600;
-            color: #60a5fa;
-            margin-bottom: 4px;
-        }
-
-        .video-intro {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-        }
-
-        .intro-video-container {
-            margin-bottom: 30px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            border: 4px solid #3b82f6;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(96, 165, 250, 0.1));
-            padding: 8px;
-        }
-
-        .intro-video {
-            width: 560px;
-            height: 315px;
-            border: none;
-            border-radius: 15px;
-            background: #000;
-        }
-
-        .intro-gif {
-            width: 250px;
-            height: 440px;
-            border: none;
-            border-radius: 15px;
-            background: #000;
-            object-fit: contain;
-        }
-
-        .gif-placeholder {
-            width: 250px;
-            height: 440px;
-            border-radius: 15px;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #60a5fa;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .intro-message {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .intro-message h2 {
-            color: #60a5fa;
-            font-size: 1.8rem;
-            font-weight: 700;
-            line-height: 1.4;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            text-align: center;
-            padding: 20px;
-            border-radius: 15px;
-            background-color: rgba(59, 130, 246, 0.1);
-            border: 2px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .player-subtitle {
-            color: #94a3b8;
-            font-size: 1rem;
-            margin-bottom: 30px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
-        }
-
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border: 2px solid #ef4444;
-        }
-
-        .no-talent {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        @media (max-width: 768px) {
-            .talent-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .filters {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Pims Talent Minion</h1>
-            <p class="subtitle">Creative Team Rating System</p>
-        </div>
-
-        <!-- Video Intro Screen -->
-        <div id="videoIntro" class="video-intro">
-            <div class="intro-message">
-                <h2>Enjoy this animated video of Pim whilst we wait</h2>
-            </div>
-            <div class="intro-video-container">
-                <img 
-                    id="introGif"
-                    src="pim.gif" 
-                    class="intro-gif"
-                    alt="Pim GIF"
-                    onload="this.style.display='block'; document.querySelector('.gif-placeholder').style.display='none';"
-                    onerror="document.querySelector('.gif-placeholder').innerHTML='<p>GIF not found - using placeholder</p>'">
-                <div class="gif-placeholder">
-                    <p>Loading Pim's GIF...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Player Selection Screen -->
-        <div id="playerSelection" class="player-selection" style="display: none;">
-            <div class="selection-header">
-                <h2>🎮 Choose Your Player</h2>
-                <p class="player-subtitle">Select your creative team member to begin rating talent</p>
-            </div>
-            <div class="profile-options" id="profileOptions">
-                <!-- Profile options will be populated by JavaScript -->
-            </div>
-        </div>
-
-        <!-- Main App (hidden until player selected) -->
-        <div id="mainApp" class="main-app" style="display: none;">
-            <div class="controls">
-                <div class="user-info">
-                    <div class="current-user">
-                        <img id="currentUserPic" src="" alt="" class="current-user-pic">
-                        <span id="currentUserName">Selected User</span>
-                        <button onclick="changeUser()" class="change-user-btn">Change User</button>
-                    </div>
-                    <button id="weightControlBtn" class="weight-control-btn">⚖️ Weight Control</button>
-                </div>
-
-                <div class="filters-container">
-                    <div class="filters-header">
-                        <h3>🔍 Search & Filter</h3>
-                        <button class="clear-filters-btn" onclick="clearFilters()">🗑️ Clear All</button>
-                    </div>
-                    
-                    <div class="filters-grid">
-                        <div class="filter-row">
-                            <div class="filter-group search-group">
-                                <label for="searchName">👤 Search by Name</label>
-                                <input type="text" id="searchName" placeholder="Type talent name..." oninput="applyFilters()">
-                            </div>
-                        </div>
-                        
-                        <div class="filter-row">
-                            <div class="filter-group role-filter-group">
-                                <label>🎭 Role</label>
-                                <div class="role-buttons" id="roleButtons">
-                                    <!-- Role buttons will be populated here -->
-                                </div>
-                            </div>
-                            <div class="filter-group">
-                                <label for="filterAge">🎂 Age</label>
-                                <input type="number" id="filterAge" placeholder="Age">
-                            </div>
-                            <div class="filter-group">
-                                <label for="filterGender">⚥ Gender</label>
-                                <select id="filterGender">
-                                    <option value="">All Genders</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-row">
-                            <div class="filter-group">
-                                <label for="filterEthnicity">🌍 Ethnicity</label>
-                                <select id="filterEthnicity">
-                                    <option value="">All Ethnicities</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label for="filterCountry">🏳️ Country</label>
-                                <select id="filterCountry">
-                                    <option value="">All Countries</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label for="filterRating">⭐ Rating</label>
-                                <select id="filterRating">
-                                    <option value="">All Ratings</option>
-                                    <option value="Yes">✅ Yes</option>
-                                    <option value="No">❌ No</option>
-                                    <option value="Maybe">🤔 Maybe</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label for="filterTeamRating">👥 Team Rating</label>
-                                <select id="filterTeamRating">
-                                    <option value="">All Team Ratings</option>
-                                    <option value="certified-yes">✅ CERTIFIED YES</option>
-                                    <option value="certified-no">❌ CERTIFIED NO</option>
-                                    <option value="certified-maybe">🤔 CERTIFIED MAYBE</option>
-                                    <option value="uncertain">⚖️ Mixed/Uncertain</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="loading" class="loading">
-                <div class="loading-video-container">
-                    <iframe 
-                        src="https://drive.google.com/file/d/1xM0_OrRMzudxOu4nuA9fimEdxDEbkuHc/preview" 
-                        class="loading-video"
-                        allow="autoplay; fullscreen"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <div class="loading-message">
-                    <h2>Hello good sir or mam, information is loading please enjoy this video of Pim</h2>
-                </div>
-            </div>
-
-            <div id="error" class="error" style="display: none;">
-                Error loading data. Please refresh the page.
-            </div>
-
-            <div id="talentGrid" class="talent-grid" style="display: none;">
-                <!-- Talent cards will be populated here -->
-            </div>
-
-            <div id="noTalent" class="no-talent" style="display: none;">
-                No talent found matching your filters.
-            </div>
-        </div>
-    </div>
-
-    <!-- Weight Control Modal -->
-    <div id="weightModal" class="weight-modal">
-        <div class="weight-modal-content">
-            <h2>⚖️ Voting Weights</h2>
-            <div id="weightControls"></div>
-            <div class="weight-modal-buttons">
-                <button id="weightSaveBtn" class="weight-modal-btn weight-save-btn">Save Settings</button>
-                <button id="weightCancelBtn" class="weight-modal-btn weight-cancel-btn">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Global variables
-        let talentData = [];
-        let filteredData = [];
-        let selectedUser = '';
-        let teamViewMode = false;
-
-        // Profile pictures mapping
-        const profilePictures = {
-            'Claire': 'claire.jpeg',
-            'Olivia': 'olivia.jpeg', 
-            'Fran': 'Francesca .jpeg',
-            'Victor': 'Victor.jpeg',
-            'Lauren': 'Lauren Cotsa.jpeg',
-            'Pim': 'Pim.jpeg'
-        };
-
-        // Voting weights system
-        let votingWeights = {
-            'Claire': 1.0,    // Normal weight
-            'Olivia': 1.0,    // Normal weight
-            'Fran': 1.0,      // Normal weight
-            'Victor': 1.0,    // Normal weight
-            'Lauren': 1.0,    // Normal weight
-            'Pim': 1.0        // Normal weight
-        };
-
-        // Test function to verify weight system is working
-        function testWeightSystem() {
-            console.log('=== TESTING WEIGHT SYSTEM ===');
-            console.log('Current votingWeights:', votingWeights);
-            
-            // Test with sample ratings
-            const testRatings = [
-                { name: 'Claire', rating: 'Yes' },
-                { name: 'Olivia', rating: 'No' },
-                { name: 'Fran', rating: 'Yes' },
-                { name: 'Victor', rating: 'No' },
-                { name: 'Lauren', rating: 'Maybe' },
-                { name: 'Pim', rating: 'Yes' }
-            ];
-            
-            const result = calculateTeamRating(testRatings);
-            console.log('Test result with normal weights:', result);
-            
-            // Test with extra weight for Claire
-            votingWeights['Claire'] = 2.0;
-            const resultWithExtraWeight = calculateTeamRating(testRatings);
-            console.log('Test result with Claire having 2x weight:', resultWithExtraWeight);
-            
-            // Reset Claire's weight
-            votingWeights['Claire'] = 1.0;
-            console.log('=== END WEIGHT SYSTEM TEST ===');
-        }
-
-        // Initialize the application
-        // Weight control functions
-        function openWeightModal() {
-            console.log('=== OPENING WEIGHT MODAL ===');
-            const modal = document.getElementById('weightModal');
-            const controlsContainer = document.getElementById('weightControls');
-            
-            if (!modal || !controlsContainer) {
-                console.error('Weight modal elements not found!');
-                return;
-            }
-            
-            console.log('Current votingWeights:', votingWeights);
-            
-            // Clear existing controls
-            controlsContainer.innerHTML = '';
-            
-            // Create weight controls for each team member
-            Object.keys(profilePictures).forEach(name => {
-                const currentWeight = votingWeights[name];
-                console.log(`Creating controls for ${name} with weight ${currentWeight}`);
-                
-                const weightItem = document.createElement('div');
-                weightItem.className = 'weight-control-item';
-                weightItem.innerHTML = `
-                    <div class="person-info">
-                        <img src="${profilePictures[name]}" alt="${name}" onerror="this.src='https://via.placeholder.com/50x50?text=${name.charAt(0)}'">
-                        <span class="name">${name}</span>
-                    </div>
-                    <div class="weight-options">
-                        <div class="weight-option extra ${currentWeight === 2.0 ? 'active' : ''}" data-weight="2.0" data-name="${name}">🟢 Extra</div>
-                        <div class="weight-option normal ${currentWeight === 1.0 ? 'active' : ''}" data-weight="1.0" data-name="${name}">⚪ Normal</div>
-                        <div class="weight-option ignore ${currentWeight === 0.0 ? 'active' : ''}" data-weight="0.0" data-name="${name}">🔴 Ignore</div>
-                    </div>
-                `;
-                controlsContainer.appendChild(weightItem);
-            });
-            
-            // Add click listeners to weight options
-            const weightOptions = controlsContainer.querySelectorAll('.weight-option');
-            console.log(`Added ${weightOptions.length} weight option listeners`);
-            
-            weightOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    console.log('=== WEIGHT OPTION CLICKED ===');
-                    const name = this.dataset.name;
-                    const weight = parseFloat(this.dataset.weight);
-                    
-                    console.log(`Clicked: ${name} -> ${weight}`);
-                    
-                    // Remove active class from all options for this person
-                    controlsContainer.querySelectorAll(`[data-name="${name}"]`).forEach(opt => {
-                        opt.classList.remove('active');
-                    });
-                    
-                    // Add active class to clicked option
-                    this.classList.add('active');
-                    
-                    // Update voting weight
-                    votingWeights[name] = weight;
-                    
-                    console.log('=== WEIGHT CHANGE DEBUG ===');
-                    console.log('Weight changed for', name, 'to', weight);
-                    console.log('Current votingWeights:', votingWeights);
-                    console.log('=== END WEIGHT CHANGE DEBUG ===');
-                    
-                    // Save weight to Google Sheets instantly
-                    const weightText = weight === 2.0 ? 'Extra Weight' : weight === 0.0 ? 'Ignore' : 'Normal';
-                    updateWeightInGoogleSheets(selectedUser, name, weightText);
-                    
-                    // Show popup animation
-                    showWeightUpdatePopup();
-                    
-                    // Instantly update all talent cards to reflect new weights
-                    updateTalentCards();
-                    
-                    // If a profile modal is open, refresh it with new weights
-                    console.log('About to call refreshOpenProfileModal...');
-                    refreshOpenProfileModal();
-                    
-                    // Hide popup after updates
-                    setTimeout(() => {
-                        hideWeightUpdatePopup();
-                    }, 1000);
-                });
-            });
-            
-            modal.style.display = 'flex';
-            console.log('=== WEIGHT MODAL OPENED ===');
-        }
-
-        function closeWeightModal() {
-            document.getElementById('weightModal').style.display = 'none';
-        }
-
-        function saveWeightSettings() {
-            console.log('=== SAVING WEIGHT SETTINGS ===');
-            console.log('Current votingWeights:', votingWeights);
-            
-            // Save all weights to Google Sheets
-            Object.keys(votingWeights).forEach(targetUser => {
-                const weight = votingWeights[targetUser];
-                const weightText = weight === 2.0 ? 'Extra Weight' : weight === 0.0 ? 'Ignore' : 'Normal';
-                updateWeightInGoogleSheets(selectedUser, targetUser, weightText);
-            });
-            
-            // Settings are already saved in votingWeights object
-            closeWeightModal();
-            
-            // If a profile modal is open, close it and reopen it with new weights
-            const openModal = document.querySelector('.modal');
-            if (openModal) {
-                const talentIndex = openModal.dataset.talentIndex;
-                if (talentIndex !== undefined) {
-                    // Close current modal
-                    openModal.remove();
-                    // Reopen with new weights
-                    showProfile(parseInt(talentIndex));
-                }
-            }
-            
-            console.log('=== WEIGHT SETTINGS SAVED ===');
-        }
-
-        // Update weight in Google Sheets
-        async function updateWeightInGoogleSheets(currentUser, targetUser, weight) {
-            try {
-                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=updateWeight&currentUser=${encodeURIComponent(currentUser)}&targetUser=${encodeURIComponent(targetUser)}&weight=${encodeURIComponent(weight)}`
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    console.log(`Weight updated in Google Sheets: ${currentUser} -> ${targetUser} = ${weight}`);
-                } else {
-                    console.error('Error updating weight in Google Sheets:', result.error);
-                }
-            } catch (error) {
-                console.error('Error updating weight in Google Sheets:', error);
-            }
-        }
-
-        // Helper function to get weight badge HTML
-        function getWeightBadge(name) {
-            const weight = votingWeights[name];
-            if (weight === 2.0) {
-                return '<span style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; margin-left: 8px;">🟢 EXTRA WEIGHT</span>';
-            }
-            if (weight === 0.0) {
-                return '<span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; margin-left: 8px;">🔴 IGNORED</span>';
-            }
-            return ''; // No badge for normal weight (1.0)
-        }
-
-        // Recalculate all team votes with current weights
-        function recalculateAllTeamVotes() {
-            console.log('=== RECALCULATING ALL TEAM VOTES ===');
-            console.log('Using votingWeights:', votingWeights);
-            
-            talentData.forEach((talent, index) => {
-                const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
-                
-                const ratings = [
-                    { name: 'Claire', rating: claireRating, notes: claireNotes },
-                    { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
-                    { name: 'Fran', rating: franRating, notes: franNotes },
-                    { name: 'Victor', rating: victorRating, notes: victorNotes },
-                    { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
-                    { name: 'Pim', rating: pimRating, notes: pimNotes }
-                ];
-                
-                const newTeamRating = calculateTeamRating(ratings);
-                console.log(`Talent ${index} (${name}): ${newTeamRating}`);
-            });
-            
-            console.log('=== ALL TEAM VOTES RECALCULATED ===');
-        }
-
-        // Update calculateTeamRating to use voting weights and exclude empty votes
-        function calculateTeamRating(ratings) {
-            let yesWeight = 0;
-            let noWeight = 0;
-            let maybeWeight = 0;
-            
-            console.log('=== Weight Calculation Debug ===');
-            console.log('Current votingWeights:', votingWeights);
-            console.log('Input ratings:', ratings);
-            
-            ratings.forEach(rating => {
-                // Only count votes that are not empty, null, or undefined
-                if (rating.rating && rating.rating.trim() !== '') {
-                    const weight = votingWeights[rating.name] ?? 1.0;
-                    
-                    // Skip votes with 0 weight (ignored)
-                    console.log(`Checking ${rating.name}: weight=${weight}, type=${typeof weight}, ===0: ${weight === 0}, ==0: ${weight == 0}`);
-                    if (weight === 0) {
-                        console.log(`🚫 ${rating.name}: ${rating.rating} (COMPLETELY IGNORED - weight 0)`);
-                        console.log(`   → This vote will NOT count towards team decision`);
-                        return; // Skip this vote entirely
-                    }
-                    
-                    console.log(`${rating.name}: ${rating.rating} (weight: ${weight})`);
-                    
-                    if (rating.rating === 'Yes') {
-                        yesWeight += weight;
-                    } else if (rating.rating === 'No') {
-                        noWeight += weight;
-                    } else if (rating.rating === 'Maybe') {
-                        maybeWeight += weight;
-                    }
-                } else {
-                    console.log(`${rating.name}: No vote (empty/null)`);
-                }
-            });
-            
-            console.log(`Final weights - Yes: ${yesWeight}, No: ${noWeight}, Maybe: ${maybeWeight}`);
-            
-            // If no one has voted, return 'No Votes'
-            if (yesWeight === 0 && noWeight === 0 && maybeWeight === 0) {
-                console.log('Final result: No Votes');
-                console.log('=== End Weight Calculation ===');
-                return 'No Votes';
-            }
-            
-            let result;
-            if (yesWeight > noWeight && yesWeight > maybeWeight) {
-                result = 'Certified Yes';
-            } else if (noWeight > yesWeight && noWeight > maybeWeight) {
-                result = 'Certified No';
-            } else if (maybeWeight > yesWeight && maybeWeight > noWeight) {
-                result = 'Certified Maybe';
-            } else {
-                result = 'Split Decision';
-            }
-            
-            console.log('Final result:', result);
-            console.log('=== End Weight Calculation ===');
-            
-            return result;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            setupEventListeners();
-            // Test the weight system on page load
-            testWeightSystem();
-            // Start with video intro
-            showVideoIntro();
-        });
-
-        // Show video intro first
-        function showVideoIntro() {
-            document.getElementById('videoIntro').style.display = 'flex';
-            document.getElementById('playerSelection').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'none';
-            
-            // Load talent data in background while GIF plays
-            loadTalentData();
-            
-            // Show GIF immediately and transition after 3 seconds
-            const gif = document.getElementById('introGif');
-            const placeholder = document.querySelector('.gif-placeholder');
-            
-            if (gif) {
-                // Show the GIF (it should be loaded from your upload)
-                gif.style.display = 'block';
-                if (placeholder) placeholder.style.display = 'none';
-                
-                // Transition to player selection after 4.5 seconds
-                setTimeout(() => {
-                    showPlayerSelection();
-                }, 4500); // 4.5 seconds as requested
-            }
-        }
-
-        // Show player selection after video
-        function showPlayerSelection() {
-            document.getElementById('videoIntro').style.display = 'none';
-            document.getElementById('playerSelection').style.display = 'block';
-            populateProfileOptions();
-        }
-
-        // Populate profile options with pictures
-        function populateProfileOptions() {
-            const profileOptionsContainer = document.getElementById('profileOptions');
-            const users = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'];
-            
-            // Clear existing content first
-            profileOptionsContainer.innerHTML = '';
-            
-            profileOptionsContainer.innerHTML = users.map(user => `
-                <div class="profile-option" onclick="selectProfile('${user}')" data-user="${user}">
-                    <img src="${profilePictures[user]}" alt="${user}" class="profile-pic">
-                    <span>${user}</span>
-                </div>
-            `).join('');
-        }
-
-        // Select profile function
-        function selectProfile(user) {
-            selectedUser = user;
-            
-            // Hide all other screens
-            document.getElementById('videoIntro').style.display = 'none';
-            document.getElementById('playerSelection').style.display = 'none';
-            
-            // Show main app
-            document.getElementById('mainApp').style.display = 'block';
-            
-            // Update current user display
-            document.getElementById('currentUserPic').src = profilePictures[user];
-            document.getElementById('currentUserName').textContent = user;
-            
-            // Talent data should already be loaded from the video intro
-            if (talentData.length > 0) {
-                filteredData = talentData;
-                updateTalentCards();
-            }
-        }
-
-        // Change user function
-        function changeUser() {
-            // Hide main app and video intro
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('videoIntro').style.display = 'none';
-            
-            // Show player selection screen
-            document.getElementById('playerSelection').style.display = 'block';
-            
-            // Reset selection
-            selectedUser = '';
-        }
-
-        // Set up event listeners
-        function setupEventListeners() {
-            // Filter inputs
-            const filterInputs = ['searchName', 'filterAge', 'filterGender', 'filterEthnicity', 'filterCountry', 'filterRating', 'filterTeamRating'];
-            filterInputs.forEach(id => {
-                document.getElementById(id).addEventListener('input', filterTalent);
-            });
-            
-            // Weight control
-            document.getElementById('weightControlBtn').addEventListener('click', openWeightModal);
-            document.getElementById('weightSaveBtn').addEventListener('click', saveWeightSettings);
-            document.getElementById('weightCancelBtn').addEventListener('click', closeWeightModal);
-        }
-
-        // Configuration
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwWiprP0Q4bkIGvEWBhYZro91GzYUpko5NXAyeNTyQZ4pbJ4vD-xOx-YIzEPUHL9PS7QA/exec';
-
-        // Load talent data from Google Sheets
-        function loadTalentData() {
-            // Make API call to Google Apps Script
-            fetch(`${GOOGLE_APPS_SCRIPT_URL}?action=getTalentData`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        onDataLoaded(data.data);
-                    } else {
-                        onDataError(data.error || 'Unknown error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    onDataError('Failed to connect to Google Sheets. Please check the console for details.');
-                });
-        }
-
-        // Demo data for testing outside Google Apps Script
-        function getDemoData() {
-            return [
-                ['HOME GYMER', 'John Smith', '28', 'Male', 'Caucasian', 'USA', 'https://instagram.com/johnsmith', 'https://via.placeholder.com/80x80?text=John', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['DOG WALKER', 'Sarah Johnson', '24', 'Female', 'Hispanic', 'Mexico', 'https://instagram.com/sarahj', 'https://via.placeholder.com/80x80?text=Sarah', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['DIYER', 'Mike Chen', '32', 'Male', 'Asian', 'Canada', 'https://instagram.com/mikechen', 'https://via.placeholder.com/80x80?text=Mike', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['NURSE', 'Emily Davis', '26', 'Female', 'African American', 'USA', 'https://instagram.com/emilyd', 'https://via.placeholder.com/80x80?text=Emily', '', '', '', '', '', '', '', '', '', '', '', ''],
-                ['HIKER', 'Alex Rodriguez', '30', 'Male', 'Hispanic', 'Spain', 'https://instagram.com/alexr', 'https://via.placeholder.com/80x80?text=Alex', '', '', '', '', '', '', '', '', '', '', '', '']
-            ];
-        }
-
-        // Handle successful data load
-        function onDataLoaded(data) {
-            talentData = data;
-            filteredData = [...talentData];
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'none';
-            populateFilterDropdowns();
-            updateTalentCards();
-        }
-
-        // Populate filter dropdowns with unique values from data
-        function populateFilterDropdowns() {
-            const roles = [...new Set(talentData.map(talent => talent[0]).filter(role => role))];
-            const genders = [...new Set(talentData.map(talent => talent[3]).filter(gender => gender))];
-            const ethnicities = [...new Set(talentData.map(talent => talent[4]).filter(ethnicity => ethnicity))];
-            const countries = [...new Set(talentData.map(talent => talent[5]).filter(country => country))];
-
-            // Populate role buttons
-            const roleButtons = document.getElementById('roleButtons');
-            // Clear existing buttons first
-            roleButtons.innerHTML = '';
-            roles.forEach(role => {
-                const button = document.createElement('button');
-                button.className = 'role-btn';
-                button.dataset.role = role;
-                button.innerHTML = `${getRoleEmoji(role)} ${role}`;
-                button.onclick = () => toggleRole(role);
-                roleButtons.appendChild(button);
-            });
-
-            // Populate gender dropdown with standard options
-            const genderSelect = document.getElementById('filterGender');
-            const standardGenders = ['Male', 'Female', 'Non-binary', 'Other'];
-            
-            // Clear existing options first (keep "All Genders" option)
-            genderSelect.innerHTML = '<option value="">All Genders</option>';
-            
-            // Add standard gender options
-            standardGenders.forEach(gender => {
-                const option = document.createElement('option');
-                option.value = gender;
-                option.textContent = gender;
-                genderSelect.appendChild(option);
-            });
-            
-            // Add any custom genders from data that aren't in standard list
-            genders.forEach(gender => {
-                if (!standardGenders.includes(gender)) {
-                    const option = document.createElement('option');
-                    option.value = gender;
-                    option.textContent = gender;
-                    genderSelect.appendChild(option);
-                }
-            });
-
-            // Populate ethnicity dropdown
-            const ethnicitySelect = document.getElementById('filterEthnicity');
-            // Clear existing options first (keep "All Ethnicities" option)
-            ethnicitySelect.innerHTML = '<option value="">All Ethnicities</option>';
-            ethnicities.forEach(ethnicity => {
-                const option = document.createElement('option');
-                option.value = ethnicity;
-                option.textContent = ethnicity;
-                ethnicitySelect.appendChild(option);
-            });
-
-            // Populate country dropdown
-            const countrySelect = document.getElementById('filterCountry');
-            // Clear existing options first (keep "All Countries" option)
-            countrySelect.innerHTML = '<option value="">All Countries</option>';
-            countries.forEach(country => {
-                const option = document.createElement('option');
-                option.value = country;
-                option.textContent = country;
-                countrySelect.appendChild(option);
-            });
-        }
-
-
-        // Handle data load error
-        function onDataError(error) {
-            console.error('Error loading data:', error);
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
-        }
-
-        // Filter talent based on user input
-        function filterTalent() {
-            const searchName = document.getElementById('searchName').value;
-            const selectedRole = getSelectedRole();
-            const age = document.getElementById('filterAge').value;
-            const gender = document.getElementById('filterGender').value;
-            const ethnicity = document.getElementById('filterEthnicity').value;
-            const country = document.getElementById('filterCountry').value;
-            const rating = document.getElementById('filterRating').value;
-            const teamRating = document.getElementById('filterTeamRating').value;
-
-            filteredData = talentData.filter(talent => {
-                const talentName = talent[1] || '';
-                const talentRole = talent[0] || '';
-                const talentAge = talent[2] || '';
-                const talentGender = talent[3] || '';
-                const talentEthnicity = talent[4] || '';
-                const talentCountry = talent[5] || '';
-                const averageRating = talent[10] || '';
-                const certifiedStatus = getCertifiedStatus(talent).status;
-                
-                // Get current user's rating for this talent
-                const currentUserRating = selectedUser ? getUserRating(talent, selectedUser) : '';
-
-                return (
-                    (searchName === '' || talentName.toLowerCase().includes(searchName.toLowerCase())) &&
-                    (selectedRole === '' || talentRole === selectedRole) &&
-                    (age === '' || talentAge.toString() === age) &&
-                    (gender === '' || talentGender === gender) &&
-                    (ethnicity === '' || talentEthnicity === ethnicity) &&
-                    (country === '' || talentCountry === country) &&
-                    (rating === '' || currentUserRating === rating) &&
-                    (teamRating === '' || certifiedStatus === teamRating)
-                );
-            });
-
-            updateTalentCards();
-        }
-
-        // Get selected role from role buttons
-        function getSelectedRole() {
-            const activeRoleBtn = document.querySelector('.role-btn.active');
-            return activeRoleBtn ? activeRoleBtn.dataset.role : '';
-        }
-
-        // Toggle role button selection
-        function toggleRole(role) {
-            // Remove active class from all role buttons
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Add active class to clicked button
-            const clickedBtn = document.querySelector(`[data-role="${role}"]`);
-            if (clickedBtn) {
-                clickedBtn.classList.add('active');
-            }
-            
-            filterTalent();
-        }
-
-        // Clear all filters
-        function clearFilters() {
-            document.getElementById('searchName').value = '';
-            document.getElementById('filterAge').value = '';
-            document.getElementById('filterGender').value = '';
-            document.getElementById('filterEthnicity').value = '';
-            document.getElementById('filterCountry').value = '';
-            document.getElementById('filterRating').value = '';
-            document.getElementById('filterTeamRating').value = '';
-            
-            // Clear role selection
-            document.querySelectorAll('.role-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show all talent
-            filteredData = talentData;
-            updateTalentCards();
-        }
-
-        // Update the talent cards display
-        function updateTalentCards() {
-            console.log('updateTalentCards called');
-            const grid = document.getElementById('talentGrid');
-            const noTalent = document.getElementById('noTalent');
-
-            if (filteredData.length === 0) {
-                grid.style.display = 'none';
-                noTalent.style.display = 'block';
-                return;
-            }
-
-            grid.style.display = 'grid';
-            noTalent.style.display = 'none';
-
-            grid.innerHTML = filteredData.map((talent, filteredIndex) => {
-                // Find the original index in talentData
-                const originalIndex = talentData.findIndex(originalTalent => originalTalent === talent);
-                return createTalentCard(talent, originalIndex);
-            }).join('');
-            console.log('Talent cards updated');
-        }
-
-        // Get emoji for role type
-        function getRoleEmoji(role) {
-            const roleLower = (role || '').toLowerCase();
-            
-            if (roleLower.includes('dog') || roleLower.includes('walker')) return '🐕';
-            if (roleLower.includes('gym') || roleLower.includes('workout') || roleLower.includes('fitness')) return '💪';
-            if (roleLower.includes('diy') || roleLower.includes('welding') || roleLower.includes('woodwork')) return '🔨';
-            if (roleLower.includes('birthday') || roleLower.includes('party') || roleLower.includes('pool')) return '🎉';
-            if (roleLower.includes('nurse') || roleLower.includes('hospital') || roleLower.includes('medical')) return '🏥';
-            if (roleLower.includes('hiker') || roleLower.includes('hiking') || roleLower.includes('stairs')) return '🥾';
-            if (roleLower.includes('biker') || roleLower.includes('bike') || roleLower.includes('cycling')) return '🚴';
-            if (roleLower.includes('mic') || roleLower.includes('karaoke') || roleLower.includes('singing')) return '🎤';
-            if (roleLower.includes('lunch') || roleLower.includes('packing') || roleLower.includes('dad')) return '🍱';
-            if (roleLower.includes('rv') || roleLower.includes('road trip') || roleLower.includes('camping')) return '🚐';
-            if (roleLower.includes('teacher') || roleLower.includes('education')) return '👩‍🏫';
-            if (roleLower.includes('chef') || roleLower.includes('cooking') || roleLower.includes('kitchen')) return '👨‍🍳';
-            if (roleLower.includes('artist') || roleLower.includes('painting') || roleLower.includes('creative')) return '🎨';
-            if (roleLower.includes('musician') || roleLower.includes('music') || roleLower.includes('band')) return '🎵';
-            if (roleLower.includes('dancer') || roleLower.includes('dance')) return '💃';
-            if (roleLower.includes('actor') || roleLower.includes('actress') || roleLower.includes('theater')) return '🎭';
-            if (roleLower.includes('model') || roleLower.includes('fashion')) return '👗';
-            if (roleLower.includes('sports') || roleLower.includes('athlete')) return '⚽';
-            if (roleLower.includes('tech') || roleLower.includes('computer') || roleLower.includes('programming')) return '💻';
-            if (roleLower.includes('business') || roleLower.includes('office') || roleLower.includes('corporate')) return '💼';
-            if (roleLower.includes('student') || roleLower.includes('college') || roleLower.includes('university')) return '🎓';
-            if (roleLower.includes('parent') || roleLower.includes('family') || roleLower.includes('mom') || roleLower.includes('dad')) return '👨‍👩‍👧‍👦';
-            if (roleLower.includes('child') || roleLower.includes('kid') || roleLower.includes('teen')) return '👶';
-            if (roleLower.includes('elderly') || roleLower.includes('senior') || roleLower.includes('grandparent')) return '👴';
-            if (roleLower.includes('doctor') || roleLower.includes('physician')) return '👩‍⚕️';
-            if (roleLower.includes('police') || roleLower.includes('officer') || roleLower.includes('cop')) return '👮';
-            if (roleLower.includes('firefighter') || roleLower.includes('fire')) return '👨‍🚒';
-            if (roleLower.includes('pilot') || roleLower.includes('flight')) return '✈️';
-            if (roleLower.includes('driver') || roleLower.includes('taxi') || roleLower.includes('uber')) return '🚗';
-            if (roleLower.includes('waiter') || roleLower.includes('server') || roleLower.includes('restaurant')) return '🍽️';
-            if (roleLower.includes('barista') || roleLower.includes('coffee')) return '☕';
-            if (roleLower.includes('retail') || roleLower.includes('shop') || roleLower.includes('store')) return '🛍️';
-            if (roleLower.includes('construction') || roleLower.includes('builder') || roleLower.includes('contractor')) return '👷';
-            if (roleLower.includes('farmer') || roleLower.includes('agriculture')) return '🚜';
-            if (roleLower.includes('scientist') || roleLower.includes('research') || roleLower.includes('lab')) return '🔬';
-            if (roleLower.includes('lawyer') || roleLower.includes('legal') || roleLower.includes('attorney')) return '⚖️';
-            if (roleLower.includes('photographer') || roleLower.includes('camera')) return '📸';
-            if (roleLower.includes('journalist') || roleLower.includes('reporter') || roleLower.includes('news')) return '📰';
-            if (roleLower.includes('yoga') || roleLower.includes('meditation') || roleLower.includes('wellness')) return '🧘';
-            if (roleLower.includes('travel') || roleLower.includes('tourist') || roleLower.includes('vacation')) return '🧳';
-            if (roleLower.includes('gamer') || roleLower.includes('gaming') || roleLower.includes('video game')) return '🎮';
-            if (roleLower.includes('social media') || roleLower.includes('influencer') || roleLower.includes('blogger')) return '📱';
-            if (roleLower.includes('volunteer') || roleLower.includes('charity') || roleLower.includes('nonprofit')) return '🤝';
-            if (roleLower.includes('entrepreneur') || roleLower.includes('startup') || roleLower.includes('business owner')) return '💡';
-            if (roleLower.includes('freelancer') || roleLower.includes('consultant')) return '💼';
-            if (roleLower.includes('retired') || roleLower.includes('pension')) return '🏖️';
-            if (roleLower.includes('unemployed') || roleLower.includes('job seeker')) return '🔍';
-            
-            // Default emoji for unknown roles
-            return '👤';
-        }
-
-        // Create a talent card
-        function createTalentCard(talent, index) {
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
-
-            const ratings = [
-                { name: 'Claire', rating: claireRating },
-                { name: 'Olivia', rating: oliviaRating },
-                { name: 'Fran', rating: franRating },
-                { name: 'Victor', rating: victorRating },
-                { name: 'Lauren', rating: laurenRating },
-                { name: 'Pim', rating: pimRating }
-            ];
-
-            const currentUserRating = selectedUser ? ratings.find(r => r.name === selectedUser)?.rating || '' : '';
-            const currentUserNotes = selectedUser ? getCurrentUserNotes(talent, selectedUser) : '';
-            const roleEmoji = getRoleEmoji(role);
-
-            return `
-                <div class="talent-card" data-talent-index="${index}">
-                    <img src="${formatGoogleDriveImage(headshot) || 'https://via.placeholder.com/400x200?text=No+Photo'}" 
-                         alt="Headshot" class="talent-image" 
-                         onerror="this.src='https://via.placeholder.com/400x200?text=No+Photo'">
-                    
-                    <div class="talent-content">
-                        <h3 class="talent-name" onclick="showProfile(${index})">${name || 'Unknown'}</h3>
-                        <div class="talent-role">${roleEmoji} ${role || 'No Role'}</div>
-
-                        <div class="talent-details">
-                            <div class="detail-row">
-                                <span class="detail-label">Age:</span>
-                                <span class="detail-value">${age || 'N/A'}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Gender:</span>
-                                <span class="detail-value">${gender || 'N/A'}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Ethnicity:</span>
-                                <span class="detail-value">${ethnicity || 'N/A'}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Country:</span>
-                                <span class="detail-value">${country || 'N/A'}</span>
-                            </div>
-                        </div>
-
-                         ${link ? `<div class="link-handle"><a href="${link}" target="_blank">View Casting Link</a></div>` : ''}
-
-                        <div class="rating-controls">
-                            <div class="rating-buttons">
-                                <button class="rating-btn yes ${currentUserRating === 'Yes' ? 'active' : ''}" 
-                                        onclick="updateRating(${index}, 'Yes')" 
-                                        ${!selectedUser ? 'disabled' : ''}>Yes</button>
-                                <button class="rating-btn no ${currentUserRating === 'No' ? 'active' : ''}" 
-                                        onclick="updateRating(${index}, 'No')" 
-                                        ${!selectedUser ? 'disabled' : ''}>No</button>
-                                <button class="rating-btn maybe ${currentUserRating === 'Maybe' ? 'active' : ''}" 
-                                        onclick="updateRating(${index}, 'Maybe')" 
-                                        ${!selectedUser ? 'disabled' : ''}>Maybe</button>
-                            </div>
-                            
-                            <div class="notes-icon-container">
-                                <button class="notes-icon-btn" onclick="toggleNotes(${index})" title="Add Notes">
-                                    📝
-                                </button>
-                                ${currentUserNotes ? '<span class="notes-indicator">•</span>' : ''}
-                            </div>
-                        </div>
-
-                        ${selectedUser ? `
-                            <div class="notes-section" id="notes-section-${index}" style="display: none;">
-                                <label for="notes-${index}">Notes (${selectedUser}):</label>
-                                <textarea id="notes-${index}" class="notes-textarea" 
-                                          placeholder="Add your notes here...">${currentUserNotes}</textarea>
-                                <div class="notes-actions">
-                                    <button class="save-notes-btn" onclick="saveNotes(${index})">💾 Save Note</button>
-                                    <button class="cancel-notes-btn" onclick="toggleNotes(${index})">✕ Cancel</button>
-                                </div>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Get current user's notes
-        function getCurrentUserNotes(talent, user) {
-            const userNotesMap = {
-                'Claire': talent[16],
-                'Olivia': talent[17],
-                'Fran': talent[18],
-                'Victor': talent[19],
-                'Lauren': talent[20]
-            };
-            return userNotesMap[user] || '';
-        }
-
-        // Show talent profile in a modal
-        async function showProfile(index) {
-            // Refresh data from Google Sheets before showing profile
-            console.log('Refreshing data from Google Sheets...');
-            try {
-                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'getTalentData'
-                    })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        talentData = data.data;
-                        filteredData = [...talentData];
-                        console.log('Data refreshed successfully');
-                    }
-                }
-            } catch (error) {
-                console.error('Error refreshing data:', error);
-            }
-            
-            // Use talentData instead of filteredData to ensure we get the most current data
-            const talent = talentData[index];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
-
-            const ratings = [
-                { name: 'Claire', rating: claireRating, notes: claireNotes },
-                { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
-                { name: 'Fran', rating: franRating, notes: franNotes },
-                { name: 'Victor', rating: victorRating, notes: victorNotes },
-                { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
-                { name: 'Pim', rating: pimRating, notes: pimNotes }
-            ];
-
-            const modal = document.createElement('div');
-            modal.dataset.talentIndex = index; // Store talent index for refresh
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.8);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-                backdrop-filter: blur(10px);
-            `;
-
-            modal.innerHTML = `
-                <div style="
-                    background: rgba(15, 23, 42, 0.95);
-                    border-radius: 20px;
-                    padding: 40px;
-                    max-width: 800px;
-                    width: 95%;
-                    max-height: 90vh;
-                    overflow-y: auto;
-                    border: 1px solid rgba(59, 130, 246, 0.3);
-                    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-                ">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <img src="${formatGoogleDriveImage(headshot) || 'https://via.placeholder.com/400x400?text=No+Photo'}" 
-                             style="
-                                max-width: 100%;
-                                max-height: 400px;
-                                width: auto;
-                                height: auto;
-                                border-radius: 15px;
-                                margin-bottom: 20px;
-                                border: 3px solid #3b82f6;
-                                cursor: pointer;
-                                transition: transform 0.3s;
-                             " 
-                             onclick="this.style.transform = this.style.transform === 'scale(1.5)' ? 'scale(1)' : 'scale(1.5)'; this.style.zIndex = this.style.zIndex === '1001' ? '1000' : '1001';"
-                             onmouseover="this.style.boxShadow='0 0 30px rgba(59, 130, 246, 0.5)'"
-                             onmouseout="this.style.boxShadow='none'">
-                        <h2 style="color: #f8fafc; font-size: 2rem; margin-bottom: 10px;">${name || 'Unknown'}</h2>
-                        <p style="color: #94a3b8; font-size: 1.2rem;">${getRoleEmoji(role)} ${role || 'No Role'}</p>
-                        
-                        <!-- Team Vote Status -->
-                        <div style="margin: 20px 0;" data-team-vote>
-                            ${(() => {
-                                console.log('=== PROFILE MODAL WEIGHT CALCULATION ===');
-                                console.log('Current votingWeights:', votingWeights);
-                                console.log('Ratings for', name, ':', ratings);
-                                
-                                // Force refresh of votingWeights to ensure we have the latest
-                                console.log('Forcing weight calculation with current weights...');
-                                const teamRating = calculateTeamRating(ratings);
-                                console.log('Profile modal teamRating:', teamRating);
-                                console.log('=== END PROFILE MODAL CALCULATION ===');
-                                
-                                const statusColors = {
-                                    'Certified Yes': 'linear-gradient(135deg, #10b981, #059669)',
-                                    'Certified No': 'linear-gradient(135deg, #ef4444, #dc2626)',
-                                    'Certified Maybe': 'linear-gradient(135deg, #f59e0b, #d97706)',
-                                    'Split Decision': 'linear-gradient(135deg, #6b7280, #4b5563)',
-                                    'No Votes': 'linear-gradient(135deg, #9ca3af, #6b7280)'
-                                };
-                                return `
-                                    <div style="
-                                        display: inline-flex;
-                                        align-items: center;
-                                        gap: 8px;
-                                        padding: 12px 24px;
-                                        border-radius: 15px;
-                                        background: ${statusColors[teamRating]};
-                                        color: white;
-                                        font-weight: 700;
-                                        font-size: 1.1rem;
-                                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-                                    ">
-                                        ${getStatusEmoji(teamRating)} ${teamRating}
-                                    </div>
-                                `;
-                            })()}
-                        </div>
-                        
-                        <p style="color: #60a5fa; font-size: 0.9rem; margin-top: 5px;">Click image to expand</p>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                        <div><strong style="color: #60a5fa;">Age:</strong> <span style="color: #cbd5e1;">${age || 'N/A'}</span></div>
-                        <div><strong style="color: #60a5fa;">Gender:</strong> <span style="color: #cbd5e1;">${gender || 'N/A'}</span></div>
-                        <div><strong style="color: #60a5fa;">Ethnicity:</strong> <span style="color: #cbd5e1;">${ethnicity || 'N/A'}</span></div>
-                        <div><strong style="color: #60a5fa;">Country:</strong> <span style="color: #cbd5e1;">${country || 'N/A'}</span></div>
-                    </div>
-                    
-                     ${link ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${link}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600;">View Casting Link</a></div>` : ''}
-                    
-                    <div style="border-top: 1px solid rgba(59, 130, 246, 0.2); padding-top: 20px;" data-team-ratings>
-                        <h3 style="color: #60a5fa; margin-bottom: 15px;">Team Ratings & Notes</h3>
-                        ${ratings.map(r => {
-                            const userProfilePic = profilePictures[r.name] || 'https://via.placeholder.com/30x30?text=' + r.name.charAt(0);
-                            return `
-                                <div style="margin-bottom: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                        <div style="display: flex; align-items: center; gap: 10px;">
-                                            <img src="${userProfilePic}" alt="${r.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">
-                                            <strong style="color: #f8fafc;">${r.name}</strong>
-                                            ${getWeightBadge(r.name)}
-                                        </div>
-                                        <span style="
-                                            padding: 4px 12px; 
-                                            border-radius: 20px; 
-                                            font-size: 0.8rem; 
-                                            font-weight: 600;
-                                            ${r.rating === 'Yes' ? 'background: #10b981; color: white;' : ''}
-                                            ${r.rating === 'No' ? 'background: #ef4444; color: white;' : ''}
-                                            ${r.rating === 'Maybe' ? 'background: #f59e0b; color: white;' : ''}
-                                            ${!r.rating ? 'background: #374151; color: #9ca3af;' : ''}
-                                        ">${r.rating || 'No Rating'}</span>
-                                    </div>
-                                    ${r.notes ? `<div style="color: #cbd5e1; font-size: 0.9rem;">${r.notes}</div>` : '<div style="color: #6b7280; font-size: 0.9rem; font-style: italic;">No notes</div>'}
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 30px;">
-                        <button onclick="this.closest('div').parentElement.remove()" style="
-                            background: #3b82f6;
-                            color: white;
-                            border: none;
-                            padding: 12px 24px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            cursor: pointer;
-                            transition: background 0.3s;
-                        " onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(modal);
-            modal.onclick = (e) => {
-                if (e.target === modal) modal.remove();
-            };
-        }
-
-        // Refresh open profile modal with new weights
-        function refreshOpenProfileModal() {
-            console.log('=== REFRESH OPEN PROFILE MODAL ===');
-            const openModal = document.querySelector('.modal');
-            console.log('Open modal found:', openModal);
-            if (!openModal) {
-                console.log('No modal is open');
-                return; // No modal is open
-            }
-            
-            // Find the talent index from the modal
-            const talentIndex = openModal.dataset.talentIndex;
-            console.log('Talent index:', talentIndex);
-            if (talentIndex === undefined) {
-                console.log('No talent index found');
-                return;
-            }
-            
-            console.log('Updating profile modal for talent index:', talentIndex);
-            
-            // Show popup animation
-            showWeightUpdatePopup();
-            
-            // Update the team vote display immediately with new weights
-            setTimeout(() => {
-                updateTeamVoteDisplay(openModal, parseInt(talentIndex));
-                hideWeightUpdatePopup();
-            }, 500); // Short delay for popup animation
-            console.log('=== END REFRESH OPEN PROFILE MODAL ===');
-        }
-
-        // Update team vote display with current weights
-        function updateTeamVoteDisplay(modal, talentIndex) {
-            const talent = talentData[talentIndex];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
-
-            const ratings = [
-                { name: 'Claire', rating: claireRating, notes: claireNotes },
-                { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
-                { name: 'Fran', rating: franRating, notes: franNotes },
-                { name: 'Victor', rating: victorRating, notes: victorNotes },
-                { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
-                { name: 'Pim', rating: pimRating, notes: pimNotes }
-            ];
-
-            // Calculate new team rating with updated weights
-            console.log('=== UPDATING TEAM VOTE DISPLAY ===');
-            console.log('Current votingWeights:', votingWeights);
-            console.log('Ratings being calculated:', ratings);
-            const teamRating = calculateTeamRating(ratings);
-            console.log('New team rating:', teamRating);
-            console.log('=== END TEAM VOTE DISPLAY UPDATE ===');
-            
-            // Find and update the team vote status element
-            const teamVoteElement = modal.querySelector('[data-team-vote]');
-            console.log('Team vote element found:', teamVoteElement);
-            if (teamVoteElement) {
-                const statusColors = {
-                    'Certified Yes': 'linear-gradient(135deg, #10b981, #059669)',
-                    'Certified No': 'linear-gradient(135deg, #ef4444, #dc2626)',
-                    'Certified Maybe': 'linear-gradient(135deg, #f59e0b, #d97706)',
-                    'Split Decision': 'linear-gradient(135deg, #6b7280, #4b5563)',
-                    'No Votes': 'linear-gradient(135deg, #9ca3af, #6b7280)'
-                };
-                
-                teamVoteElement.innerHTML = `
-                    <div style="
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 12px 24px;
-                        border-radius: 15px;
-                        background: ${statusColors[teamRating]};
-                        color: white;
-                        font-weight: 700;
-                        font-size: 1.1rem;
-                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-                    ">
-                        ${getStatusEmoji(teamRating)} ${teamRating}
-                    </div>
-                `;
-                
-                console.log('Team vote updated to:', teamRating);
-            }
-        }
-
-        // Show weight update popup animation
-        function showWeightUpdatePopup() {
-            // Remove existing popup if any
-            const existingPopup = document.getElementById('weightUpdatePopup');
-            if (existingPopup) {
-                existingPopup.remove();
-            }
-            
-            const popup = document.createElement('div');
-            popup.id = 'weightUpdatePopup';
-            popup.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-                color: white;
-                padding: 20px 30px;
-                border-radius: 15px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                z-index: 10000;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                animation: popupSlideIn 0.3s ease-out;
-            `;
-            
-            popup.innerHTML = `
-                <span style="animation: spin 1s linear infinite;">🏃‍♂️</span>
-                <span>Updating Team Ratings...</span>
-            `;
-            
-            // Add CSS animation if not exists
-            if (!document.getElementById('popupAnimations')) {
-                const style = document.createElement('style');
-                style.id = 'popupAnimations';
-                style.textContent = `
-                    @keyframes popupSlideIn {
-                        from {
-                            opacity: 0;
-                            transform: translate(-50%, -60%);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translate(-50%, -50%);
-                        }
-                    }
-                    @keyframes popupSlideOut {
-                        from {
-                            opacity: 1;
-                            transform: translate(-50%, -50%);
-                        }
-                        to {
-                            opacity: 0;
-                            transform: translate(-50%, -40%);
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            document.body.appendChild(popup);
-        }
-
-        // Hide weight update popup animation
-        function hideWeightUpdatePopup() {
-            const popup = document.getElementById('weightUpdatePopup');
-            if (popup) {
-                popup.style.animation = 'popupSlideOut 0.3s ease-in';
-                setTimeout(() => {
-                    if (popup.parentNode) {
-                        popup.remove();
-                    }
-                }, 300);
-            }
-        }
-
-        // Get emoji for status
-        function getStatusEmoji(status) {
-            const statusEmojis = {
-                'Certified Yes': '✅',
-                'Certified No': '❌',
-                'Certified Maybe': '🤔',
-                'Split Decision': '⚖️',
-                'No Votes': '⏳'
-            };
-            return statusEmojis[status] || '❓';
-        }
-
-        // Format Google Drive image URL for public access
-        function formatGoogleDriveImage(url) {
-            if (!url) {
-                return null;
-            }
-            
-            // Extract file ID from various Google Drive URL formats
-            let fileId = null;
-            
-            if (url.includes('drive.google.com/file/d/')) {
-                const match = url.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
-                if (match) fileId = match[1];
-            } else if (url.includes('drive.google.com/open?id=')) {
-                fileId = url.split('id=')[1].split('&')[0];
-            } else if (url.match(/^[a-zA-Z0-9-_]+$/)) {
-                fileId = url;
-            }
-            
-            if (!fileId) return url;
-            
-            // Use the working thumbnail format that we tested
-            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
-        }
-
-        // Update rating
-        function updateRating(index, rating) {
-            if (!selectedUser) {
-                alert('Please select your profile first');
-                return;
-            }
-
-            // INSTANT VISUAL FEEDBACK - Update UI immediately
-            updateRatingButtonsVisual(index, rating);
-            
-            const notes = document.getElementById(`notes-${index}`) ? document.getElementById(`notes-${index}`).value : '';
-            
-            // Background recording (doesn't block UI)
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run
-                    .withSuccessHandler(() => {
-                        console.log('Rating saved successfully');
-                    })
-                    .withFailureHandler((error) => {
-                        console.error('Error updating rating:', error);
-                        // Revert visual state on error
-                        updateRatingButtonsVisual(index, '');
-                        alert('Error updating rating. Please try again.');
-                    })
-                    .updateRating(index, selectedUser, rating, notes);
-            } else {
-                // Make API call to Google Apps Script
-                const formData = new FormData();
-                formData.append('action', 'updateRating');
-                formData.append('rowIndex', index);
-                formData.append('user', selectedUser);
-                formData.append('rating', rating);
-                formData.append('notes', notes);
-
-                fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Rating update response:', data);
-                    if (data.success) {
-                        console.log('Rating saved successfully, updating local data...');
-                        
-                        // Update local talentData immediately
-                        updateLocalTalentData(index, selectedUser, rating);
-                        
-                        // Refresh data and update team ratings
-                        refreshDataAndUpdateDisplay();
-                        
-                        // Update any open profile modal
-                        updateOpenProfileModal();
-                    } else {
-                        console.log('Rating save failed:', data.error);
-                        // Revert visual state on error
-                        updateRatingButtonsVisual(index, '');
-                        alert('Error updating rating: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating rating:', error);
-                    // Revert visual state on error
-                    updateRatingButtonsVisual(index, '');
-                    alert('Error updating rating. Please try again.');
-                });
-            }
-        }
-
-        // Update local talentData immediately after voting
-        function updateLocalTalentData(index, user, rating) {
-            if (!talentData[index]) return;
-            
-            // Map user names to column indices
-            const userColumnMap = {
-                'Claire': 11,  // Column L
-                'Olivia': 12,  // Column M
-                'Fran': 13,    // Column N
-                'Victor': 14,  // Column O
-                'Lauren': 15,  // Column P
-                'Pim': 21      // Column V
-            };
-            
-            const columnIndex = userColumnMap[user];
-            if (columnIndex !== undefined) {
-                talentData[index][columnIndex] = rating;
-                console.log(`Updated local data: ${user} rating for talent ${index} = ${rating}`);
-            }
-        }
-
-        // Update any open profile modal with fresh data
-        function updateOpenProfileModal() {
-            const openModal = document.querySelector('.modal');
-            if (!openModal) return; // No modal is open
-            
-            const talentIndex = openModal.dataset.talentIndex;
-            if (talentIndex === undefined) return;
-            
-            // Update the team vote display
-            updateTeamVoteDisplay(openModal, parseInt(talentIndex));
-            
-            // Update individual team member ratings display
-            updateTeamMemberRatings(openModal, parseInt(talentIndex));
-        }
-
-        // Update team member ratings display in profile modal
-        function updateTeamMemberRatings(modal, talentIndex) {
-            const talent = talentData[talentIndex];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes] = talent;
-
-            const ratings = [
-                { name: 'Claire', rating: claireRating, notes: claireNotes },
-                { name: 'Olivia', rating: oliviaRating, notes: oliviaNotes },
-                { name: 'Fran', rating: franRating, notes: franNotes },
-                { name: 'Victor', rating: victorRating, notes: victorNotes },
-                { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
-                { name: 'Pim', rating: pimRating, notes: pimNotes }
-            ];
-
-            // Find and update the team ratings section
-            const teamRatingsSection = modal.querySelector('[data-team-ratings]');
-            if (teamRatingsSection) {
-                teamRatingsSection.innerHTML = ratings.map(r => {
-                    const userProfilePic = profilePictures[r.name] || 'https://via.placeholder.com/30x30?text=' + r.name.charAt(0);
-                    return `
-                        <div style="margin-bottom: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="${userProfilePic}" alt="${r.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">
-                                    <strong style="color: #f8fafc;">${r.name}</strong>
-                                    ${getWeightBadge(r.name)}
-                                </div>
-                                <span style="
-                                    padding: 4px 12px; 
-                                    border-radius: 20px; 
-                                    font-size: 0.8rem; 
-                                    font-weight: 600;
-                                    ${r.rating === 'Yes' ? 'background: #10b981; color: white;' : ''}
-                                    ${r.rating === 'No' ? 'background: #ef4444; color: white;' : ''}
-                                    ${r.rating === 'Maybe' ? 'background: #f59e0b; color: white;' : ''}
-                                    ${!r.rating ? 'background: #374151; color: #9ca3af;' : ''}
-                                ">${r.rating || 'No Rating'}</span>
-                            </div>
-                            ${r.notes ? `<div style="color: #cbd5e1; font-size: 0.9rem;">${r.notes}</div>` : '<div style="color: #6b7280; font-size: 0.9rem; font-style: italic;">No notes</div>'}
-                        </div>
-                    `;
-                }).join('');
-                
-                console.log('Team member ratings updated in profile modal');
-            }
-        }
-
-        // Refresh data from Google Sheets and update display
-        async function refreshDataAndUpdateDisplay() {
-            try {
-                console.log('Refreshing data after rating update...');
-                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'getTalentData'
-                    })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        talentData = data.data;
-                        filteredData = [...talentData];
-                        console.log('Data refreshed successfully after rating update');
-                        // Update the talent cards to show new team ratings
-                        updateTalentCards();
-                        console.log('Team ratings updated on talent cards');
-                    }
-                }
-            } catch (error) {
-                console.error('Error refreshing data after rating update:', error);
-            }
-        }
-
-        // Update rating buttons visual state instantly
-        function updateRatingButtonsVisual(index, rating) {
-            const card = document.querySelector(`[data-talent-index="${index}"]`);
-            if (!card) return;
-
-            const yesBtn = card.querySelector('.rating-btn.yes');
-            const noBtn = card.querySelector('.rating-btn.no');
-            const maybeBtn = card.querySelector('.rating-btn.maybe');
-
-            // Remove all active states
-            [yesBtn, noBtn, maybeBtn].forEach(btn => {
-                if (btn) {
-                    btn.classList.remove('active');
-                    btn.style.background = '';
-                    btn.style.color = '';
-                }
-            });
-
-            // Add active state to selected button
-            let activeBtn = null;
-            if (rating === 'Yes' && yesBtn) activeBtn = yesBtn;
-            if (rating === 'No' && noBtn) activeBtn = noBtn;
-            if (rating === 'Maybe' && maybeBtn) activeBtn = maybeBtn;
-
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                if (rating === 'Yes') {
-                    activeBtn.style.background = '#10b981';
-                    activeBtn.style.color = 'white';
-                } else if (rating === 'No') {
-                    activeBtn.style.background = '#ef4444';
-                    activeBtn.style.color = 'white';
-                } else if (rating === 'Maybe') {
-                    activeBtn.style.background = '#f59e0b';
-                    activeBtn.style.color = 'white';
-                }
-            }
-        }
-
-        // Save notes (called by save button)
-        function saveNotes(index) {
-            if (!selectedUser) {
-                return;
-            }
-
-            const textarea = document.getElementById(`notes-${index}`);
-            const notes = textarea ? textarea.value : '';
-
-            // Get current rating to preserve it
-            const card = document.querySelector(`[data-talent-index="${index}"]`);
-            let currentRating = '';
-            if (card) {
-                const activeBtn = card.querySelector('.rating-btn.active');
-                if (activeBtn) {
-                    if (activeBtn.classList.contains('yes')) currentRating = 'Yes';
-                    else if (activeBtn.classList.contains('no')) currentRating = 'No';
-                    else if (activeBtn.classList.contains('maybe')) currentRating = 'Maybe';
-                }
-            }
-
-            // Show saving feedback
-            const saveBtn = document.querySelector(`[onclick="saveNotes(${index})"]`);
-            if (saveBtn) {
-                saveBtn.textContent = '💾 Saving...';
-                saveBtn.disabled = true;
-            }
-
-            // Make API call to Google Apps Script
-            const formData = new FormData();
-            formData.append('action', 'updateRating');
-            formData.append('rowIndex', index);
-            formData.append('user', selectedUser);
-            formData.append('rating', currentRating);
-            formData.append('notes', notes);
-
-            fetch(GOOGLE_APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    console.log('Notes saved successfully');
-                    // Update notes indicator
-                    updateNotesIndicator(index, notes);
-                    // Hide notes section
-                    toggleNotes(index);
-                } else {
-                    alert('Error saving notes: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error saving notes:', error);
-                alert('Error saving notes. Please try again.');
-            })
-            .finally(() => {
-                // Reset save button
-                if (saveBtn) {
-                    saveBtn.textContent = '💾 Save Note';
-                    saveBtn.disabled = false;
-                }
-            });
-        }
-
-        // Update notes indicator
-        function updateNotesIndicator(index, notes) {
-            const notesIconContainer = document.querySelector(`[data-talent-index="${index}"] .notes-icon-container`);
-            if (notesIconContainer) {
-                const indicator = notesIconContainer.querySelector('.notes-indicator');
-                if (notes && notes.trim()) {
-                    if (!indicator) {
-                        notesIconContainer.innerHTML += '<span class="notes-indicator">•</span>';
-                    }
-                } else {
-                    if (indicator) {
-                        indicator.remove();
-                    }
-                }
-            }
-        }
-
-        // Toggle notes section visibility
-        function toggleNotes(index) {
-            if (!selectedUser) {
-                alert('Please select your profile first');
-                return;
-            }
-            
-            const notesSection = document.getElementById(`notes-section-${index}`);
-            if (notesSection) {
-                const isVisible = notesSection.style.display !== 'none';
-                notesSection.style.display = isVisible ? 'none' : 'block';
-                
-                // Focus on textarea when showing
-                if (!isVisible) {
-                    setTimeout(() => {
-                        const textarea = document.getElementById(`notes-${index}`);
-                        if (textarea) textarea.focus();
-                    }, 100);
-                }
-            }
-        }
-
-        // Toggle team view mode
-        function toggleTeamView() {
-            teamViewMode = !teamViewMode;
-            const teamBtn = document.querySelector('.team-view-btn');
-            
-            if (teamViewMode) {
-                teamBtn.classList.add('active');
-                teamBtn.textContent = '👤 Individual View';
-            } else {
-                teamBtn.classList.remove('active');
-                teamBtn.textContent = '👥 Team View';
-            }
-            
-            updateTalentCards();
-        }
-
-        // Get certified status based on team votes
-        function getCertifiedStatus(talent) {
-            const votes = {
-                'Yes': 0,
-                'No': 0,
-                'Maybe': 0
-            };
-            
-            const users = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'];
-            users.forEach(user => {
-                const userRating = getUserRating(talent, user);
-                if (userRating && votes.hasOwnProperty(userRating)) {
-                    votes[userRating]++;
-                }
-            });
-            
-            const totalVotes = votes.Yes + votes.No + votes.Maybe;
-            if (totalVotes === 0) return { status: 'uncertain', text: 'No Votes Yet', icon: '❓' };
-            
-            const maxVotes = Math.max(votes.Yes, votes.No, votes.Maybe);
-            const majority = Object.keys(votes).find(vote => votes[vote] === maxVotes);
-            
-            if (votes[majority] >= 3) {
-                if (majority === 'Yes') return { status: 'certified-yes', text: '✅ CERTIFIED YES', icon: '✅' };
-                if (majority === 'No') return { status: 'certified-no', text: '❌ CERTIFIED NO', icon: '❌' };
-                if (majority === 'Maybe') return { status: 'certified-maybe', text: '🤔 CERTIFIED MAYBE', icon: '🤔' };
-            }
-            
-            return { status: 'uncertain', text: 'Mixed Votes', icon: '⚖️' };
-        }
-
-        // Get user rating for a talent
-        function getUserRating(talent, user) {
-            const userIndex = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'].indexOf(user);
-            if (userIndex === -1) return null;
-            
-            let ratingColumn;
-            if (user === 'Pim') {
-                ratingColumn = 21; // Column V (22-1 for 0-based)
-            } else {
-                ratingColumn = 11 + userIndex; // Columns L-P (11-15)
-            }
-            return talent[ratingColumn] || '';
-        }
-
-        // Get user notes for a talent
-        function getUserNotes(talent, user) {
-            const userIndex = ['Claire', 'Olivia', 'Fran', 'Victor', 'Lauren', 'Pim'].indexOf(user);
-            if (userIndex === -1) return '';
-            
-            let notesColumn;
-            if (user === 'Pim') {
-                notesColumn = 22; // Column W (23-1 for 0-based)
-            } else {
-                notesColumn = 16 + userIndex; // Columns Q-U (16-20)
-            }
-            return talent[notesColumn] || '';
-        }
-
-        // Show team member notes in modal
-        function showTeamNotes(user, notes) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>📝 ${user}'s Notes</h3>
-                        <button class="close-btn" onclick="this.closest('.modal').remove()">✕</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="team-notes">
-                            <div class="team-notes-label">${user}'s Notes:</div>
-                            <div class="notes-content">${notes}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            // Close modal when clicking outside
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-        }
-
-        // Get current user's rating for a talent
-        function getCurrentUserRating(index) {
-            const talent = filteredData[index];
-            const userRatingMap = {
-                'Claire': talent[11],
-                'Olivia': talent[12],
-                'Fran': talent[13],
-                'Victor': talent[14],
-                'Lauren': talent[15]
-            };
-            return userRatingMap[selectedUser] || '';
-        }
-    </script>
-</body>
-</html>
+/**
+ * Google Apps Script for Talent Tracker with Weight System
+ * Deploy this in your Google Sheet: Extensions > Apps Script
+ */
+
+// Configuration
+const SHEET_NAME = 'Auditions';
+const SHEET_ID = '1r8nevJ24_wmIcHhmGtms6qwT3sJohEMeO9uvqZnMB9g';
+
+// Column mappings
+const COLUMNS = {
+  ROLE: 1,           // A
+  TALENT_NAME: 2,    // B
+  AGE: 3,            // C
+  GENDER: 4,         // D
+  ETHNICITY: 5,      // E
+  COUNTRY: 6,        // F
+  LINK: 7,           // G
+  HEADSHOT: 8,       // H
+  OVERALL_RATING: 10, // J
+  AVERAGE_RATING: 11, // K
+  CLAIRE_RATING: 12,  // L
+  OLIVIA_RATING: 13,  // M
+  FRAN_RATING: 14,    // N
+  VICTOR_RATING: 15,  // O
+  LAUREN_RATING: 16,  // P
+  CLAIRE_NOTES: 17,   // Q
+  OLIVIA_NOTES: 18,   // R
+  FRAN_NOTES: 19,     // S
+  VICTOR_NOTES: 20,   // T
+  LAUREN_NOTES: 21,   // U
+  PIM_RATING: 22,     // V
+  PIM_NOTES: 23,      // W
+  TORBEN_RATING: 24,  // X
+  TORBEN_NOTES: 25,   // Y
+  CLAIRE_WEIGHT: 27,  // AA
+  OLIVIA_WEIGHT: 28,  // AB
+  FRAN_WEIGHT: 29,    // AC
+  VICTOR_WEIGHT: 30,  // AD
+  LAUREN_WEIGHT: 31,  // AE
+  PIM_WEIGHT: 32,     // AF
+  TORBEN_WEIGHT: 33   // AG
+};
+
+// User mappings
+const USERS = {
+  'Claire': { ratingCol: COLUMNS.CLAIRE_RATING, notesCol: COLUMNS.CLAIRE_NOTES, weightCol: COLUMNS.CLAIRE_WEIGHT },
+  'Olivia': { ratingCol: COLUMNS.OLIVIA_RATING, notesCol: COLUMNS.OLIVIA_NOTES, weightCol: COLUMNS.OLIVIA_WEIGHT },
+  'Fran': { ratingCol: COLUMNS.FRAN_RATING, notesCol: COLUMNS.FRAN_NOTES, weightCol: COLUMNS.FRAN_WEIGHT },
+  'Victor': { ratingCol: COLUMNS.VICTOR_RATING, notesCol: COLUMNS.VICTOR_NOTES, weightCol: COLUMNS.VICTOR_WEIGHT },
+  'Lauren': { ratingCol: COLUMNS.LAUREN_RATING, notesCol: COLUMNS.LAUREN_NOTES, weightCol: COLUMNS.LAUREN_WEIGHT },
+  'Pim': { ratingCol: COLUMNS.PIM_RATING, notesCol: COLUMNS.PIM_NOTES, weightCol: COLUMNS.PIM_WEIGHT },
+  'Torben': { ratingCol: COLUMNS.TORBEN_RATING, notesCol: COLUMNS.TORBEN_NOTES, weightCol: COLUMNS.TORBEN_WEIGHT }
+};
+
+/**
+ * Handle GET requests
+ */
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    success: true,
+    message: 'Talent Tracker API is running'
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Handle POST requests
+ */
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const action = data.action;
+    
+    switch (action) {
+      case 'getTalentData':
+        return ContentService.createTextOutput(JSON.stringify(getTalentData()))
+          .setMimeType(ContentService.MimeType.JSON);
+          
+      case 'updateRating':
+        return ContentService.createTextOutput(JSON.stringify(
+          updateRating(data.user, data.talentIndex, data.rating, data.notes)
+        )).setMimeType(ContentService.MimeType.JSON);
+        
+      case 'updateNotes':
+        return ContentService.createTextOutput(JSON.stringify(
+          updateNotes(data.user, data.talentIndex, data.notes)
+        )).setMimeType(ContentService.MimeType.JSON);
+        
+      case 'updateWeight':
+        return ContentService.createTextOutput(JSON.stringify(
+          updateWeight(data.currentUser, data.targetUser, data.weight)
+        )).setMimeType(ContentService.MimeType.JSON);
+        
+      case 'calculateTeamRating':
+        return ContentService.createTextOutput(JSON.stringify(
+          calculateTeamRatingForTalent(data.talentIndex)
+        )).setMimeType(ContentService.MimeType.JSON);
+        
+      default:
+        return ContentService.createTextOutput(JSON.stringify({
+          success: false,
+          error: 'Unknown action'
+        })).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Get all talent data from the Auditions sheet
+ */
+function getTalentData() {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      throw new Error('Auditions sheet not found');
+    }
+    
+    const data = sheet.getDataRange().getValues();
+    
+    // Skip header row and return data starting from row 2
+    const talentData = data.slice(1).map(row => [
+      row[COLUMNS.ROLE - 1] || '',
+      row[COLUMNS.TALENT_NAME - 1] || '',
+      row[COLUMNS.AGE - 1] || '',
+      row[COLUMNS.GENDER - 1] || '',
+      row[COLUMNS.ETHNICITY - 1] || '',
+      row[COLUMNS.COUNTRY - 1] || '',
+      row[COLUMNS.LINK - 1] || '',
+      row[COLUMNS.HEADSHOT - 1] || '',
+      row[COLUMNS.OVERALL_RATING - 1] || '',
+      row[COLUMNS.AVERAGE_RATING - 1] || '',
+      row[COLUMNS.CLAIRE_RATING - 1] || '',
+      row[COLUMNS.OLIVIA_RATING - 1] || '',
+      row[COLUMNS.FRAN_RATING - 1] || '',
+      row[COLUMNS.VICTOR_RATING - 1] || '',
+      row[COLUMNS.LAUREN_RATING - 1] || '',
+      row[COLUMNS.CLAIRE_NOTES - 1] || '',
+      row[COLUMNS.OLIVIA_NOTES - 1] || '',
+      row[COLUMNS.FRAN_NOTES - 1] || '',
+      row[COLUMNS.VICTOR_NOTES - 1] || '',
+      row[COLUMNS.LAUREN_NOTES - 1] || '',
+      row[COLUMNS.PIM_RATING - 1] || '',
+      row[COLUMNS.PIM_NOTES - 1] || '',
+      row[COLUMNS.TORBEN_RATING - 1] || '',
+      row[COLUMNS.TORBEN_NOTES - 1] || '',
+      row[COLUMNS.CLAIRE_WEIGHT - 1] || 1,
+      row[COLUMNS.OLIVIA_WEIGHT - 1] || 1,
+      row[COLUMNS.FRAN_WEIGHT - 1] || 1,
+      row[COLUMNS.VICTOR_WEIGHT - 1] || 1,
+      row[COLUMNS.LAUREN_WEIGHT - 1] || 1,
+      row[COLUMNS.PIM_WEIGHT - 1] || 1,
+      row[COLUMNS.TORBEN_WEIGHT - 1] || 1
+    ]);
+    
+    return { success: true, data: talentData };
+  } catch (error) {
+    console.error('Error getting talent data:', error);
+    return { success: false, error: error.toString() };
+  }
+}
+
+/**
+ * Update rating for a specific user and talent row
+ */
+function updateRating(user, talentIndex, rating, notes = '') {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    const row = talentIndex + 2; // +2 because index is 0-based and we skip header
+    
+    if (USERS[user]) {
+      // Update rating
+      sheet.getRange(row, USERS[user].ratingCol).setValue(rating);
+      
+      // Update notes if provided
+      if (notes !== undefined && notes !== null) {
+        sheet.getRange(row, USERS[user].notesCol).setValue(notes);
+      }
+      
+      calculateAndUpdateAverage(row);
+      return { success: true };
+    } else {
+      return { success: false, error: 'User not found' };
+    }
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+/**
+ * Update notes for a specific user and talent row
+ */
+function updateNotes(user, talentIndex, notes) {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    const row = talentIndex + 2; // +2 because index is 0-based and we skip header
+    
+    if (USERS[user]) {
+      sheet.getRange(row, USERS[user].notesCol).setValue(notes);
+      return { success: true };
+    } else {
+      return { success: false, error: 'User not found' };
+    }
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+/**
+ * Update weight for a specific user based on current user's column
+ */
+function updateWeight(currentUser, targetUser, weight) {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    
+    if (!USERS[currentUser]) {
+      return { success: false, error: 'Current user not found' };
+    }
+    
+    if (!USERS[targetUser]) {
+      return { success: false, error: 'Target user not found' };
+    }
+    
+    // Convert weight string to number
+    let weightValue = 1; // Default to normal weight
+    if (weight === 'Ignore') {
+      weightValue = 0;
+    } else if (weight === 'Extra Weight') {
+      weightValue = 2;
+    } else if (weight === 'Normal') {
+      weightValue = 1;
+    }
+    
+    // Get the column for the current user (this determines which column to write to)
+    const currentUserWeightCol = USERS[currentUser].weightCol;
+    
+    // Get the row for the target user (Claire=2, Olivia=3, Fran=4, Victor=5, Lauren=6, Pim=7)
+    const targetUserRow = getTargetUserRow(targetUser);
+    
+    // Write the weight value to the current user's column, target user's row
+    sheet.getRange(targetUserRow, currentUserWeightCol).setValue(weightValue);
+    
+    // Weight updates don't need to recalculate averages immediately
+    // The averages will be recalculated when ratings are updated
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+/**
+ * Get the row number for a target user
+ */
+function getTargetUserRow(targetUser) {
+  const userRows = {
+    'Claire': 2,
+    'Olivia': 3,
+    'Fran': 4,
+    'Victor': 5,
+    'Lauren': 6,
+    'Pim': 7,
+    'Torben': 8
+  };
+  return userRows[targetUser] || 2;
+}
+
+/**
+ * Calculate team rating for a specific talent using current weights
+ */
+function calculateTeamRatingForTalent(talentIndex) {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      throw new Error('Auditions sheet not found');
+    }
+    
+    const talentRow = talentIndex + 2; // +2 because index is 0-based and we skip header
+    
+    // Get all ratings and weights
+    const ratings = [
+      { name: 'Claire', rating: sheet.getRange(talentRow, COLUMNS.CLAIRE_RATING).getValue(), weight: sheet.getRange(2, COLUMNS.CLAIRE_WEIGHT).getValue() || 1 },
+      { name: 'Olivia', rating: sheet.getRange(talentRow, COLUMNS.OLIVIA_RATING).getValue(), weight: sheet.getRange(3, COLUMNS.OLIVIA_WEIGHT).getValue() || 1 },
+      { name: 'Fran', rating: sheet.getRange(talentRow, COLUMNS.FRAN_RATING).getValue(), weight: sheet.getRange(4, COLUMNS.FRAN_WEIGHT).getValue() || 1 },
+      { name: 'Victor', rating: sheet.getRange(talentRow, COLUMNS.VICTOR_RATING).getValue(), weight: sheet.getRange(5, COLUMNS.VICTOR_WEIGHT).getValue() || 1 },
+      { name: 'Lauren', rating: sheet.getRange(talentRow, COLUMNS.LAUREN_RATING).getValue(), weight: sheet.getRange(6, COLUMNS.LAUREN_WEIGHT).getValue() || 1 },
+      { name: 'Pim', rating: sheet.getRange(talentRow, COLUMNS.PIM_RATING).getValue(), weight: sheet.getRange(7, COLUMNS.PIM_WEIGHT).getValue() || 1 },
+      { name: 'Torben', rating: sheet.getRange(talentRow, COLUMNS.TORBEN_RATING).getValue(), weight: sheet.getRange(8, COLUMNS.TORBEN_WEIGHT).getValue() || 1 }
+    ];
+    
+    // Calculate weighted totals
+    let yesWeight = 0;
+    let noWeight = 0;
+    let maybeWeight = 0;
+    
+    ratings.forEach(rating => {
+      // Only count votes that are not empty, null, or undefined
+      if (rating.rating && rating.rating.trim() !== '') {
+        const weight = rating.weight || 1;
+        
+        if (rating.rating === 'Yes') {
+          yesWeight += weight;
+        } else if (rating.rating === 'No') {
+          noWeight += weight;
+        } else if (rating.rating === 'Maybe') {
+          maybeWeight += weight;
+        }
+      }
+    });
+    
+    // Determine result
+    let result = '';
+    if (yesWeight === 0 && noWeight === 0 && maybeWeight === 0) {
+      result = 'No Votes';
+    } else if (yesWeight > noWeight && yesWeight > maybeWeight) {
+      result = 'Certified Yes';
+    } else if (noWeight > yesWeight && noWeight > maybeWeight) {
+      result = 'Certified No';
+    } else if (maybeWeight > yesWeight && maybeWeight > noWeight) {
+      result = 'Certified Maybe';
+    } else {
+      result = 'Split Decision';
+    }
+    
+    return { success: true, teamRating: result, weights: { yesWeight, noWeight, maybeWeight } };
+  } catch (error) {
+    return { success: false, error: error.toString() };
+  }
+}
+
+/**
+ * Calculate and update the average rating for a specific row using weights
+ */
+function calculateAndUpdateAverage(row) {
+  try {
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      throw new Error('Auditions sheet not found');
+    }
+    
+    // Get all ratings and weights
+    const ratings = [
+      { name: 'Claire', rating: sheet.getRange(row, COLUMNS.CLAIRE_RATING).getValue(), weight: sheet.getRange(row, COLUMNS.CLAIRE_WEIGHT).getValue() || 1 },
+      { name: 'Olivia', rating: sheet.getRange(row, COLUMNS.OLIVIA_RATING).getValue(), weight: sheet.getRange(row, COLUMNS.OLIVIA_WEIGHT).getValue() || 1 },
+      { name: 'Fran', rating: sheet.getRange(row, COLUMNS.FRAN_RATING).getValue(), weight: sheet.getRange(row, COLUMNS.FRAN_WEIGHT).getValue() || 1 },
+      { name: 'Victor', rating: sheet.getRange(row, COLUMNS.VICTOR_RATING).getValue(), weight: sheet.getRange(row, COLUMNS.VICTOR_WEIGHT).getValue() || 1 },
+      { name: 'Lauren', rating: sheet.getRange(row, COLUMNS.LAUREN_RATING).getValue(), weight: sheet.getRange(row, COLUMNS.LAUREN_WEIGHT).getValue() || 1 },
+      { name: 'Pim', rating: sheet.getRange(row, COLUMNS.PIM_RATING).getValue(), weight: sheet.getRange(row, COLUMNS.PIM_WEIGHT).getValue() || 1 },
+      { name: 'Torben', rating: sheet.getRange(row, COLUMNS.TORBEN_RATING).getValue(), weight: sheet.getRange(row, COLUMNS.TORBEN_WEIGHT).getValue() || 1 }
+    ];
+    
+    // Calculate weighted totals
+    let yesWeight = 0;
+    let noWeight = 0;
+    let maybeWeight = 0;
+    
+    ratings.forEach(rating => {
+      // Only count votes that are not empty, null, or undefined
+      if (rating.rating && rating.rating.trim() !== '') {
+        const weight = rating.weight || 1;
+        
+        if (rating.rating === 'Yes') {
+          yesWeight += weight;
+        } else if (rating.rating === 'No') {
+          noWeight += weight;
+        } else if (rating.rating === 'Maybe') {
+          maybeWeight += weight;
+        }
+      }
+    });
+    
+    // Determine result
+    let result = '';
+    if (yesWeight === 0 && noWeight === 0 && maybeWeight === 0) {
+      result = 'No Votes';
+    } else if (yesWeight > noWeight && yesWeight > maybeWeight) {
+      result = 'Certified Yes';
+    } else if (noWeight > yesWeight && noWeight > maybeWeight) {
+      result = 'Certified No';
+    } else if (maybeWeight > yesWeight && maybeWeight > noWeight) {
+      result = 'Certified Maybe';
+    } else {
+      result = 'Split Decision';
+    }
+    
+    // Update columns J and K with the result
+    sheet.getRange(row, COLUMNS.OVERALL_RATING).setValue(result);
+    sheet.getRange(row, COLUMNS.AVERAGE_RATING).setValue(result);
+    
+    return result;
+  } catch (error) {
+    console.error('Error calculating average:', error);
+    return '';
+  }
+}
