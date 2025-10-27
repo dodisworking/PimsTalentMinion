@@ -2234,7 +2234,7 @@
             console.log('Using votingWeights:', votingWeights);
             
             talentData.forEach((talent, index) => {
-                const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes, torbenRating, torbenNotes] = talent;
+                const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
                 
                 const ratings = [
                     { name: 'Claire', rating: claireRating, notes: claireNotes },
@@ -2588,8 +2588,8 @@
                 const franRating = talent[13] || '';   // Column N
                 const victorRating = talent[14] || ''; // Column O
                 const laurenRating = talent[15] || ''; // Column P
-                const pimRating = talent[16] || '';    // Column Q (if exists)
-                const torbenRating = talent[17] || ''; // Column R (if exists)
+                const pimRating = talent[21] || '';    // Column V
+                const torbenRating = talent[23] || ''; // Column X
 
                 const ratings = [
                     { name: 'Claire', rating: claireRating, notes: '' },
@@ -2749,7 +2749,7 @@
 
         // Create a talent card
         function createTalentCard(talent, index) {
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes, torbenRating, torbenNotes] = talent;
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
 
             const ratings = [
                 { name: 'Claire', rating: claireRating },
@@ -2876,7 +2876,7 @@
             
             // Use talentData instead of filteredData to ensure we get the most current data
             const talent = talentData[index];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes, torbenRating, torbenNotes] = talent;
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
 
             const ratings = [
                 { name: 'Claire', rating: claireRating, notes: claireNotes },
@@ -3337,7 +3337,7 @@
         // Update team vote display with current weights
         function updateTeamVoteDisplay(modal, talentIndex) {
             const talent = talentData[talentIndex];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes, torbenRating, torbenNotes] = talent;
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
 
             const ratings = [
                 { name: 'Claire', rating: claireRating, notes: claireNotes },
@@ -3613,7 +3613,7 @@
         // Update team member ratings display in profile modal
         function updateTeamMemberRatings(modal, talentIndex) {
             const talent = talentData[talentIndex];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes, torbenRating, torbenNotes] = talent;
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
 
             const ratings = [
                 { name: 'Claire', rating: claireRating, notes: claireNotes },
@@ -4024,7 +4024,7 @@
             
             // Prepare data for Excel
             const excelData = filteredData.map(talent => {
-                const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes, torbenRating, torbenNotes] = talent;
+                const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
                 
                 return {
                     'Role': role,
