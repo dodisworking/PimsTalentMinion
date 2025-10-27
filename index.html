@@ -460,6 +460,145 @@
             transform: translateY(-2px);
         }
 
+        /* Download Button Styles */
+        .download-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: 1px solid rgba(79, 172, 254, 0.4);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        /* Download Option Buttons */
+        .download-option-btn {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 30px 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .download-option-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+        }
+
+        .download-option-btn div {
+            color: white !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .download-option-btn div:first-child {
+            font-size: 2.5rem !important;
+            margin-bottom: 10px;
+        }
+
+        .download-option-btn div:nth-child(2) {
+            font-size: 1.1rem !important;
+            font-weight: bold !important;
+            margin-bottom: 5px;
+        }
+
+        .download-option-btn div:last-child {
+            font-size: 0.9rem !important;
+            opacity: 0.9 !important;
+        }
+
+        /* Generic Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .modal-header h3 {
+            color: #60a5fa;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            color: #e2e8f0;
+        }
+
+        .modal-body p {
+            color: #e2e8f0 !important;
+        }
+
+        .modal-body strong {
+            color: #60a5fa !important;
+            font-weight: bold;
+        }
+
         .controls {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
@@ -1460,6 +1599,9 @@
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <button id="weightControlBtn" class="weight-control-btn">⚖️ Weight Control</button>
                         <button id="suggestedRoleViewBtn" class="suggested-role-view-btn">💡 Suggested Role View</button>
+                        <button id="downloadBtn" class="download-btn" onclick="showDownloadOptions()" style="display: none;">
+                            📊 Download Excel
+                        </button>
                     </div>
                 </div>
 
@@ -1584,6 +1726,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Download Options Modal -->
 
     <script>
         // Global variables
@@ -2478,6 +2622,7 @@
             });
 
             updateTalentCards();
+            updateDownloadButton();
         }
 
         // Get selected role from role buttons
@@ -2520,6 +2665,7 @@
             // Show all talent
             filteredData = talentData;
             updateTalentCards();
+            updateDownloadButton();
         }
 
         // Update the talent cards display
@@ -3850,6 +3996,102 @@
             };
             return userRatingMap[selectedUser] || '';
         }
+
+        // Download Feature Functions
+        function updateDownloadButton() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const hasFilters = filteredData.length !== talentData.length || 
+                              document.getElementById('searchName').value ||
+                              document.getElementById('filterAge').value ||
+                              document.getElementById('filterGender').value ||
+                              document.getElementById('filterEthnicity').value ||
+                              document.getElementById('filterCountry').value ||
+                              document.getElementById('filterRating').value ||
+                              document.getElementById('filterTeamRating').value ||
+                              getSelectedRole();
+            
+            downloadBtn.style.display = hasFilters ? 'block' : 'none';
+        }
+
+        function showDownloadOptions() {
+            // Directly download Excel since it's the only option
+            downloadExcel();
+        }
+
+
+        function downloadExcel() {
+            const workbook = XLSX.utils.book_new();
+            
+            // Prepare data for Excel
+            const excelData = filteredData.map(talent => {
+                const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, pimRating, pimNotes, torbenRating, torbenNotes] = talent;
+                
+                return {
+                    'Role': role,
+                    'Name': name,
+                    'Age': age,
+                    'Gender': gender,
+                    'Ethnicity': ethnicity,
+                    'Country': country,
+                    'Link': link,
+                    'Average Rating': averageRating,
+                    'Claire Rating': claireRating,
+                    'Olivia Rating': oliviaRating,
+                    'Fran Rating': franRating,
+                    'Victor Rating': victorRating,
+                    'Lauren Rating': laurenRating,
+                    'Pim Rating': pimRating,
+                    'Torben Rating': torbenRating,
+                    'Claire Notes': claireNotes,
+                    'Olivia Notes': oliviaNotes,
+                    'Fran Notes': franNotes,
+                    'Victor Notes': victorNotes,
+                    'Lauren Notes': laurenNotes,
+                    'Pim Notes': pimNotes,
+                    'Torben Notes': torbenNotes
+                };
+            });
+            
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Filtered Talents');
+            
+            // Generate filename with current filters
+            const filters = getCurrentFilters();
+            const filename = `Talent_Filter_${filters.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+            
+            XLSX.writeFile(workbook, filename);
+        }
+
+
+        function getCurrentFilters() {
+            const filters = [];
+            
+            const selectedRole = getSelectedRole();
+            if (selectedRole) filters.push(`Role: ${selectedRole}`);
+            
+            const age = document.getElementById('filterAge').value;
+            if (age) filters.push(`Age: ${age}`);
+            
+            const gender = document.getElementById('filterGender').value;
+            if (gender) filters.push(`Gender: ${gender}`);
+            
+            const ethnicity = document.getElementById('filterEthnicity').value;
+            if (ethnicity) filters.push(`Ethnicity: ${ethnicity}`);
+            
+            const country = document.getElementById('filterCountry').value;
+            if (country) filters.push(`Country: ${country}`);
+            
+            const rating = document.getElementById('filterRating').value;
+            if (rating) filters.push(`Rating: ${rating}`);
+            
+            const teamRating = document.getElementById('filterTeamRating').value;
+            if (teamRating) filters.push(`Team: ${teamRating}`);
+            
+            return filters.length > 0 ? filters.join(', ') : 'All Talents';
+        }
     </script>
+
+    <!-- Required Libraries for Download Feature -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>
 </html>
