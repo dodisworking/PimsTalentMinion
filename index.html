@@ -89,6 +89,31 @@
             transform: translateY(-2px);
         }
 
+        .callback-profiles-btn {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #10b981;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            margin-left: 10px;
+        }
+
+        .callback-profiles-btn:hover {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .callback-profiles-btn.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
         .weight-modal {
             display: none;
             position: fixed;
@@ -1599,6 +1624,7 @@
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <button id="weightControlBtn" class="weight-control-btn">⚖️ Weight Control</button>
                         <button id="suggestedRoleViewBtn" class="suggested-role-view-btn">💡 Suggested Role View</button>
+                        <button id="callbackProfilesBtn" class="callback-profiles-btn">📞 Callback Profiles</button>
                         <button id="downloadBtn" class="download-btn" onclick="showDownloadOptions()" style="display: none;">
                             📊 Download Excel
                         </button>
@@ -1735,6 +1761,7 @@
         let filteredData = [];
         let selectedUser = '';
         let teamViewMode = false;
+        let isCallbackView = false;
 
         // Profile pictures mapping
         const profilePictures = {
@@ -2068,6 +2095,32 @@
             setTimeout(() => {
                 message.classList.remove('show');
             }, 3000);
+        }
+
+        // Callback profiles functions
+        function toggleCallbackProfiles() {
+            const btn = document.getElementById('callbackProfilesBtn');
+            isCallbackView = !isCallbackView;
+            
+            if (isCallbackView) {
+                btn.classList.add('active');
+                btn.textContent = '📞 All Profiles';
+                showCallbackProfiles();
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '📞 Callback Profiles';
+                showAllProfiles();
+            }
+        }
+
+        function showCallbackProfiles() {
+            console.log('Showing callback profiles...');
+            filterTalent(); // This will filter for callback profiles
+        }
+
+        function showAllProfiles() {
+            console.log('Showing all profiles...');
+            filterTalent(); // This will show all profiles
         }
 
         // Weight control functions
@@ -2423,6 +2476,9 @@
             // Suggested role view
             document.getElementById('suggestedRoleViewBtn').addEventListener('click', openSuggestedRoleModal);
             document.getElementById('closeSuggestedRoleModal').addEventListener('click', closeSuggestedRoleModal);
+            
+            // Callback profiles
+            document.getElementById('callbackProfilesBtn').addEventListener('click', toggleCallbackProfiles);
         }
 
         // Configuration
@@ -2573,7 +2629,16 @@
             const rating = document.getElementById('filterRating').value;
             const teamRating = document.getElementById('filterTeamRating').value;
 
-            filteredData = talentData.filter(talent => {
+            // If in callback view, first filter for talent with callback links
+            let baseData = talentData;
+            if (isCallbackView) {
+                baseData = talentData.filter(talent => {
+                    const callbackLink = talent[10] || ''; // Column K (index 10)
+                    return callbackLink && callbackLink.trim() !== '';
+                });
+            }
+
+            filteredData = baseData.filter(talent => {
                 const talentName = talent[1] || '';
                 const talentRole = talent[0] || '';
                 const talentAge = talent[2] || '';
@@ -2876,7 +2941,7 @@
             
             // Use talentData instead of filteredData to ensure we get the most current data
             const talent = talentData[index];
-            const [role, name, age, gender, ethnicity, country, link, headshot, , , averageRating, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
+            const [role, name, age, gender, ethnicity, country, link, headshot, , , callbackLink, claireRating, oliviaRating, franRating, victorRating, laurenRating, claireNotes, oliviaNotes, franNotes, victorNotes, laurenNotes, , , pimRating, pimNotes, , torbenRating, torbenNotes] = talent;
 
             const ratings = [
                 { name: 'Claire', rating: claireRating, notes: claireNotes },
@@ -3039,6 +3104,7 @@
                     </div>
                     
                      ${link ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${link}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600;">View Casting Link</a></div>` : ''}
+                     ${callbackLink ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${callbackLink}" target="_blank" style="color: #10b981; text-decoration: none; font-weight: 600; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 8px; border: 1px solid #10b981;">📞 Callback Link</a></div>` : ''}
                     
                     <div style="border-top: 1px solid rgba(59, 130, 246, 0.2); padding-top: 20px;" data-team-ratings>
                         <h3 style="color: #60a5fa; margin-bottom: 15px;">Team Ratings & Notes</h3>
