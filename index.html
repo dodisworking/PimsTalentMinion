@@ -114,6 +114,468 @@
             border-color: #10b981;
         }
 
+        /* Talent Tinder Styles */
+        .talent-tinder-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            margin-left: 10px;
+        }
+
+        .talent-tinder-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Talent Tinder Modal */
+        .talent-tinder-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .tinder-container {
+            position: relative;
+            width: 100%;
+            height: 80vh;
+            max-height: 600px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+            padding: 20px;
+            gap: 30px;
+        }
+
+        .tinder-container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .tinder-spacer {
+            flex: 0 0 calc(50% - 175px); /* Half width minus half card width to center first card */
+            min-width: calc(50% - 175px);
+            height: 1px;
+        }
+
+        .tinder-card {
+            position: relative;
+            flex: 0 0 350px;
+            width: 350px;
+            height: 100%;
+            max-height: 560px;
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 20px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            cursor: grab;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            user-select: none;
+            transform-origin: center center;
+            opacity: 1;
+        }
+
+        .tinder-card.active-card {
+            transform: scale(1);
+            opacity: 1;
+            z-index: 10;
+            border-color: rgba(59, 130, 246, 0.6);
+        }
+
+        .tinder-card.upcoming-card {
+            transform: scale(0.9);
+            opacity: 0.6;
+            z-index: 5;
+        }
+
+        .tinder-card:active {
+            cursor: grabbing;
+        }
+
+        .tinder-card.swiping-right {
+            transform: rotate(15deg) translateX(100px) !important;
+            border-color: #10b981;
+            z-index: 100 !important;
+        }
+
+        .tinder-card.swiping-left {
+            transform: rotate(-15deg) translateX(-100px) !important;
+            border-color: #ef4444;
+            z-index: 100 !important;
+        }
+
+        .tinder-card.swiping-up {
+            transform: translateY(-100px) !important;
+            border-color: #f59e0b;
+            z-index: 100 !important;
+        }
+
+        .tinder-card-image {
+            width: 100%;
+            height: 60%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1e293b, #334155);
+        }
+
+        .tinder-card-content {
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tinder-card-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .tinder-card-role {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .tinder-card-details {
+            color: #cbd5e1;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .tinder-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .tinder-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .tinder-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .tinder-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tinder-btn-no {
+            background: #ef4444;
+            color: white;
+        }
+
+        .tinder-btn-maybe {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .tinder-btn-yes {
+            background: #10b981;
+            color: white;
+        }
+
+        .tinder-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .tinder-status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 700;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tinder-status.show {
+            opacity: 1;
+        }
+
+        .tinder-status.yes {
+            color: #10b981;
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.8);
+        }
+
+        .tinder-status.no {
+            color: #ef4444;
+            text-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+        }
+
+        .tinder-status.maybe {
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+        }
+
+        .tinder-progress {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+            z-index: 10;
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            10% { transform: translateX(-10px) rotate(-5deg); }
+            20% { transform: translateX(10px) rotate(5deg); }
+            30% { transform: translateX(-10px) rotate(-5deg); }
+            40% { transform: translateX(10px) rotate(5deg); }
+            50% { transform: translateX(-5px) rotate(-2deg); }
+            60% { transform: translateX(5px) rotate(2deg); }
+            70% { transform: translateX(-5px) rotate(-2deg); }
+            80% { transform: translateX(5px) rotate(2deg); }
+            90% { transform: translateX(0) rotate(0deg); }
+        }
+
+        @keyframes swipeRight {
+            0% { transform: translateX(0) rotate(0deg); }
+            50% { transform: translateX(50px) rotate(10deg); }
+            100% { transform: translateX(1000px) rotate(30deg); }
+        }
+
+        @keyframes swipeLeft {
+            0% { transform: translateX(0) rotate(0deg); }
+            50% { transform: translateX(-50px) rotate(-10deg); }
+            100% { transform: translateX(-1000px) rotate(-30deg); }
+        }
+
+        @keyframes swipeUp {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-50px) rotate(5deg); }
+            100% { transform: translateY(-1000px) rotate(10deg); }
+        }
+
+        .tinder-card.shaking {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .tinder-card.swiping-out-right {
+            animation: swipeRightOut 0.6s ease-in forwards;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .tinder-card.swiping-out-left {
+            animation: swipeLeftOut 0.6s ease-in forwards;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .tinder-card.swiping-out-up {
+            animation: swipeUpOut 0.6s ease-in forwards;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes swipeRightOut {
+            0% {
+                transform: translateX(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100vw) scale(0.8) rotate(30deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes swipeLeftOut {
+            0% {
+                transform: translateX(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-100vw) scale(0.8) rotate(-30deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes swipeUpOut {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(0.8) rotate(15deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .tinder-card.sliding-in {
+            animation: slideInFromRight 0.5s ease-out forwards;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            position: absolute;
+            animation: confetti 3s ease-out forwards;
+            z-index: 10000;
+        }
+
+        /* Link Preview Modal */
+        .link-preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .link-preview-content {
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: rgba(15, 23, 42, 0.98);
+            border-radius: 20px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .link-preview-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .link-preview-header h3 {
+            color: #60a5fa;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .link-preview-close {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .link-preview-close:hover {
+            background: rgba(239, 68, 68, 0.3);
+            transform: scale(1.1);
+        }
+
+        .link-preview-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+        }
+
+        .link-preview-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+
         .weight-modal {
             display: none;
             position: fixed;
@@ -268,6 +730,7 @@
             overflow-y: auto;
             border: 1px solid rgba(59, 130, 246, 0.3);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         .suggested-role-item {
@@ -1622,6 +2085,7 @@
                         <button onclick="changeUser()" class="change-user-btn">Change User</button>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center;">
+                        <button id="talentTinderBtn" class="talent-tinder-btn">❤️ Talent Tinder</button>
                         <button id="weightControlBtn" class="weight-control-btn">⚖️ Weight Control</button>
                         <button id="suggestedRoleViewBtn" class="suggested-role-view-btn">💡 Suggested Role View</button>
                         <button id="callbackProfilesBtn" class="callback-profiles-btn">📞 Callback Profiles</button>
@@ -1652,7 +2116,7 @@
                                     <!-- Role buttons will be populated here -->
                                 </div>
                             </div>
-                            <div class="filter-group">
+                            <div class="filter-group" style="display: none;">
                                 <label for="filterAge">🎂 Age</label>
                                 <input type="number" id="filterAge" placeholder="Age">
                             </div>
@@ -1671,7 +2135,7 @@
                                     <option value="">All Ethnicities</option>
                                 </select>
                             </div>
-                            <div class="filter-group">
+                            <div class="filter-group" style="display: none;">
                                 <label for="filterCountry">🏳️ Country</label>
                                 <select id="filterCountry">
                                     <option value="">All Countries</option>
@@ -1741,9 +2205,60 @@
         </div>
     </div>
 
+    <!-- Talent Tinder Modal -->
+    <div id="talentTinderModal" class="talent-tinder-modal">
+        <button class="tinder-close-btn" onclick="closeTalentTinder()">✕</button>
+        <div class="tinder-progress" id="tinderProgress">0 / 0</div>
+        <div class="tinder-container" id="tinderContainer">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+        <div class="tinder-controls">
+            <button class="tinder-btn tinder-btn-no" onclick="swipeTalent('No')" title="Swipe Left - No">❌</button>
+            <button class="tinder-btn tinder-btn-maybe" onclick="swipeTalent('Maybe')" title="Swipe Up - Maybe">🤔</button>
+            <button class="tinder-btn tinder-btn-yes" onclick="swipeTalent('Yes')" title="Swipe Right - Yes">❤️</button>
+        </div>
+        <div class="tinder-status" id="tinderStatus"></div>
+    </div>
+
+    <!-- Link Preview Modal -->
+    <div id="linkPreviewModal" class="link-preview-modal">
+        <div class="link-preview-content">
+            <div class="link-preview-header">
+                <h3>🔗 Casting Link Preview</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <a id="linkPreviewOpenTab" href="#" target="_blank" style="color: #60a5fa; text-decoration: none; font-size: 0.9rem; padding: 5px 10px; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px;">Open in New Tab</a>
+                    <button class="link-preview-close" onclick="closeLinkPreview()">✕</button>
+                </div>
+            </div>
+            <div id="linkPreviewLoading" class="link-preview-loading">
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 15px; font-size: 2rem;">⏳</div>
+                    <div>Loading preview...</div>
+                </div>
+            </div>
+            <div id="linkPreviewError" style="display: none; padding: 40px; text-align: center; color: #94a3b8;">
+                <p style="margin-bottom: 20px; font-size: 1.5rem;">⚠️</p>
+                <p style="margin-bottom: 20px; font-size: 1.1rem; font-weight: 600; color: #f8fafc;">Connection Refused</p>
+                <p style="margin-bottom: 20px; font-size: 1rem;">This website cannot be embedded due to security restrictions.</p>
+                <p style="margin-bottom: 30px; font-size: 0.95rem; color: #94a3b8;">Please open it in a new tab to view the video.</p>
+                <a id="linkPreviewErrorOpenTab" href="#" target="_blank" 
+                   style="display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; 
+                          text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1rem;
+                          transition: all 0.2s ease;">
+                    🎬 Open Video in New Tab
+                </a>
+            </div>
+            <div id="linkPreviewVideoContainer" style="display: none; flex: 1; width: 100%; position: relative; padding-bottom: 56.25%; background: #000;">
+                <iframe id="linkPreviewVideoPlayer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <iframe id="linkPreviewIframe" class="link-preview-iframe" src="" style="display: none;" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation allow-top-navigation-by-user-activation" allow="fullscreen"></iframe>
+        </div>
+    </div>
+
     <!-- Suggested Role View Modal -->
     <div id="suggestedRoleModal" class="suggested-role-modal">
         <div class="suggested-role-modal-content">
+            <button class="close-btn" onclick="closeSuggestedRoleModal()" style="position: absolute; top: 20px; left: 20px; z-index: 10;">✕</button>
             <h2>💡 Suggested Role View</h2>
             <p style="color: #94a3b8; margin-bottom: 30px;">Talents who have been suggested for other roles</p>
             <div id="suggestedRoleList"></div>
@@ -1762,6 +2277,16 @@
         let selectedUser = '';
         let teamViewMode = false;
         let isCallbackView = false;
+        
+        // Talent Tinder variables
+        let tinderTalentList = [];
+        let currentTinderIndex = 0;
+        let tinderCardElement = null;
+        let tinderStartX = 0;
+        let tinderStartY = 0;
+        let tinderCurrentX = 0;
+        let tinderCurrentY = 0;
+        let isTinderDragging = false;
 
         // Profile pictures mapping
         const profilePictures = {
@@ -1771,7 +2296,18 @@
             'Victor': 'Victor.jpeg',
             'Lauren': 'Lauren Cotsa.jpeg',
             'Pim': 'Pim.jpeg',
-            'Torben': 'Director.jpeg'
+            'Torben': '🎬' // Movie emoji for directors
+        };
+
+        // Display names mapping (for showing different names than internal keys)
+        const displayNames = {
+            'Claire': 'Claire',
+            'Olivia': 'Olivia',
+            'Fran': 'Fran',
+            'Victor': 'Victor',
+            'Lauren': 'Lauren',
+            'Pim': 'Pim',
+            'Torben': 'Charles & Nick'
         };
 
         // Voting weights system
@@ -1880,6 +2416,21 @@
             
             // Show modal
             modal.style.display = 'block';
+            
+            // Close modal when clicking outside
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    closeSuggestedRoleModal();
+                }
+            };
+            
+            // Prevent clicks inside modal content from closing it
+            const modalContent = modal.querySelector('.suggested-role-modal-content');
+            if (modalContent) {
+                modalContent.onclick = (e) => {
+                    e.stopPropagation();
+                };
+            }
         }
 
         function closeSuggestedRoleModal() {
@@ -2123,6 +2674,603 @@
             filterTalent(); // This will show all profiles
         }
 
+        // Talent Tinder Functions
+        function openTalentTinder() {
+            if (!selectedUser) {
+                alert('Please select your profile first');
+                return;
+            }
+            
+            console.log('Opening Talent Tinder...');
+            const modal = document.getElementById('talentTinderModal');
+            const container = document.getElementById('tinderContainer');
+            
+            // Clear container
+            container.innerHTML = '';
+            // Add spacer to center the first card
+            const spacer = document.createElement('div');
+            spacer.className = 'tinder-spacer';
+            container.appendChild(spacer);
+            
+            // Get unvoted talent
+            tinderTalentList = getUnvotedTalent();
+            currentTinderIndex = 0;
+            
+            if (tinderTalentList.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #94a3b8; width: 100%;">
+                        <h2 style="color: #60a5fa; margin-bottom: 20px;">🎉 All Done!</h2>
+                        <p>You've rated all available talent profiles.</p>
+                    </div>
+                `;
+            } else {
+                updateTinderProgress();
+                showNextTinderCard();
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeTalentTinder() {
+            const modal = document.getElementById('talentTinderModal');
+            modal.style.display = 'none';
+            currentTinderIndex = 0;
+            tinderCardElement = null;
+        }
+
+        function getUnvotedTalent() {
+            if (!selectedUser) return [];
+            
+            return talentData.filter(talent => {
+                const userRating = getUserRating(talent, selectedUser);
+                return !userRating || userRating.trim() === '';
+            });
+        }
+
+        function showNextTinderCard() {
+            if (currentTinderIndex >= tinderTalentList.length) {
+                const container = document.getElementById('tinderContainer');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #94a3b8; width: 100%;">
+                        <h2 style="color: #60a5fa; margin-bottom: 20px;">🎉 All Done!</h2>
+                        <p>You've rated all available talent profiles.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const container = document.getElementById('tinderContainer');
+            
+            // Ensure spacer exists for centering
+            let spacer = container.querySelector('.tinder-spacer');
+            if (!spacer) {
+                spacer = document.createElement('div');
+                spacer.className = 'tinder-spacer';
+                container.insertBefore(spacer, container.firstChild);
+            }
+            
+            // Show multiple cards in a horizontal line (current + next few)
+            const cardsToShow = Math.min(10, tinderTalentList.length - currentTinderIndex);
+            
+            // Get existing cards (excluding spacer)
+            const existingCards = container.querySelectorAll('.tinder-card');
+            const existingIndexes = Array.from(existingCards).map(card => parseInt(card.dataset.index));
+            
+            // Add new cards that don't exist yet
+            for (let i = 0; i < cardsToShow; i++) {
+                const talentIndex = currentTinderIndex + i;
+                if (talentIndex >= tinderTalentList.length) break;
+                
+                // Skip if card already exists
+                if (existingIndexes.includes(talentIndex)) continue;
+                
+                const talent = tinderTalentList[talentIndex];
+                const [role, name, age, gender, ethnicity, country, link, headshot] = talent;
+                const roleEmoji = getRoleEmoji(role);
+                
+                const card = document.createElement('div');
+                card.className = 'tinder-card';
+                card.dataset.index = talentIndex;
+                
+                if (i === 0) {
+                    card.id = 'currentTinderCard';
+                    card.classList.add('active-card', 'sliding-in');
+                } else {
+                    card.classList.add('upcoming-card');
+                }
+                
+                card.innerHTML = `
+                    <img src="${formatGoogleDriveImage(headshot) || 'https://via.placeholder.com/400x400?text=No+Photo'}" 
+                         alt="${name}" 
+                         class="tinder-card-image"
+                         onerror="this.src='https://via.placeholder.com/400x400?text=No+Photo'">
+                    <div class="tinder-card-content">
+                        <div>
+                            <div class="tinder-card-name">${name || 'Unknown'}</div>
+                            <div class="tinder-card-role">${roleEmoji} ${role || 'No Role'}</div>
+                            <div class="tinder-card-details">
+                                <div><strong>Gender:</strong> ${gender || 'N/A'}</div>
+                                <div><strong>Ethnicity:</strong> ${ethnicity || 'N/A'}</div>
+                                ${link ? `<div style="margin-top: 15px;"><a href="${link.replace(/"/g, '&quot;')}" target="_blank" class="tinder-casting-link" style="color: #60a5fa; text-decoration: none; cursor: pointer; display: inline-block; z-index: 1000; position: relative;">🔗 Casting Link</a></div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            }
+            
+            // Update all cards' classes based on current index
+            const allCards = container.querySelectorAll('.tinder-card');
+            allCards.forEach((card) => {
+                const cardIndex = parseInt(card.dataset.index);
+                if (cardIndex === currentTinderIndex) {
+                    card.id = 'currentTinderCard';
+                    card.classList.remove('upcoming-card');
+                    card.classList.add('active-card');
+                } else if (cardIndex > currentTinderIndex) {
+                    card.classList.remove('active-card');
+                    card.classList.add('upcoming-card');
+                    if (card.id === 'currentTinderCard') {
+                        card.id = '';
+                    }
+                } else {
+                    // Card is behind current, remove it
+                    card.remove();
+                }
+            });
+            
+            // The card is already centered by the spacer, just scroll to top
+            tinderCardElement = document.getElementById('currentTinderCard');
+            if (tinderCardElement) {
+                // Scroll container to the beginning (spacer will center the first card)
+                setTimeout(() => {
+                    container.scrollTo({ left: 0, behavior: 'smooth' });
+                }, 100);
+                setupTinderSwipeHandlers();
+            }
+            
+            updateTinderProgress();
+        }
+
+        function setupTinderSwipeHandlers() {
+            if (!tinderCardElement) return;
+            
+            // Remove old handlers if any
+            tinderCardElement.removeEventListener('touchstart', handleTinderStart);
+            tinderCardElement.removeEventListener('touchmove', handleTinderMove);
+            tinderCardElement.removeEventListener('touchend', handleTinderEnd);
+            tinderCardElement.removeEventListener('mousedown', handleTinderStart);
+            
+            // Touch events
+            tinderCardElement.addEventListener('touchstart', handleTinderStart, { passive: false });
+            tinderCardElement.addEventListener('touchmove', handleTinderMove, { passive: false });
+            tinderCardElement.addEventListener('touchend', handleTinderEnd);
+            
+            // Mouse events
+            tinderCardElement.addEventListener('mousedown', handleTinderStart);
+        }
+
+        function handleTinderStart(e) {
+            if (!tinderCardElement) return;
+            
+            // Don't start dragging if clicking on a link
+            if (e.target.closest('.tinder-casting-link') || e.target.classList.contains('tinder-casting-link')) {
+                return;
+            }
+            
+            isTinderDragging = true;
+            const touch = e.touches ? e.touches[0] : e;
+            tinderStartX = touch.clientX;
+            tinderStartY = touch.clientY;
+            tinderCardElement.style.transition = 'none';
+            
+            // Add global mouse handlers
+            if (!e.touches) {
+                document.addEventListener('mousemove', handleTinderMove);
+                document.addEventListener('mouseup', handleTinderEnd);
+            }
+        }
+
+        function handleTinderMove(e) {
+            if (!isTinderDragging || !tinderCardElement) return;
+            e.preventDefault();
+            const touch = e.touches ? e.touches[0] : e;
+            tinderCurrentX = touch.clientX - tinderStartX;
+            tinderCurrentY = touch.clientY - tinderStartY;
+            
+            const rotation = tinderCurrentX * 0.1;
+            tinderCardElement.style.transform = `translate(${tinderCurrentX}px, ${tinderCurrentY}px) rotate(${rotation}deg) scale(1)`;
+            
+            // Visual feedback
+            if (tinderCurrentX > 50) {
+                tinderCardElement.classList.add('swiping-right');
+                tinderCardElement.classList.remove('swiping-left', 'swiping-up');
+                tinderCardElement.style.borderColor = '#10b981';
+            } else if (tinderCurrentX < -50) {
+                tinderCardElement.classList.add('swiping-left');
+                tinderCardElement.classList.remove('swiping-right', 'swiping-up');
+                tinderCardElement.style.borderColor = '#ef4444';
+            } else if (tinderCurrentY < -50) {
+                tinderCardElement.classList.add('swiping-up');
+                tinderCardElement.classList.remove('swiping-right', 'swiping-left');
+                tinderCardElement.style.borderColor = '#f59e0b';
+            } else {
+                tinderCardElement.classList.remove('swiping-right', 'swiping-left', 'swiping-up');
+                tinderCardElement.style.borderColor = '';
+            }
+        }
+
+        function handleTinderEnd(e) {
+            if (!isTinderDragging || !tinderCardElement) return;
+            isTinderDragging = false;
+            tinderCardElement.style.transition = 'transform 0.3s ease';
+            
+            // Remove global mouse handlers
+            document.removeEventListener('mousemove', handleTinderMove);
+            document.removeEventListener('mouseup', handleTinderEnd);
+            
+            const threshold = 100;
+            let rating = null;
+            
+            if (tinderCurrentX > threshold) {
+                rating = 'Yes';
+            } else if (tinderCurrentX < -threshold) {
+                rating = 'No';
+            } else if (tinderCurrentY < -threshold) {
+                rating = 'Maybe';
+            }
+            
+            if (rating) {
+                swipeTalent(rating);
+            } else {
+                // Snap back
+                tinderCardElement.style.transform = '';
+                tinderCardElement.classList.remove('swiping-right', 'swiping-left', 'swiping-up');
+            }
+            
+            tinderCurrentX = 0;
+            tinderCurrentY = 0;
+        }
+
+        function swipeTalent(rating) {
+            if (currentTinderIndex >= tinderTalentList.length) return;
+            if (!tinderCardElement) return;
+            
+            const talent = tinderTalentList[currentTinderIndex];
+            const originalIndex = talentData.indexOf(talent);
+            
+            // Remove any existing animation classes
+            tinderCardElement.classList.remove('swiping-right', 'swiping-left', 'swiping-up', 'sliding-in');
+            tinderCardElement.style.transition = 'transform 0.6s ease-in-out, opacity 0.6s ease-in-out';
+            
+            // Show status animation
+            showTinderAnimation(rating);
+            
+            // Add swipe out animation based on rating
+            if (rating === 'Yes') {
+                tinderCardElement.classList.add('swiping-out-right');
+            } else if (rating === 'No') {
+                tinderCardElement.classList.add('swiping-out-left');
+            } else if (rating === 'Maybe') {
+                tinderCardElement.classList.add('swiping-out-up');
+            }
+            
+            // Update rating
+            updateRating(originalIndex, rating);
+            
+            // Remove card from DOM after animation and move to next
+            setTimeout(() => {
+                tinderCardElement.remove();
+                currentTinderIndex++;
+                
+                // Update remaining cards to shift them forward
+                const container = document.getElementById('tinderContainer');
+                const remainingCards = container.querySelectorAll('.tinder-card');
+                
+                if (remainingCards.length > 0) {
+                    // The next card becomes the active one
+                    const nextCard = remainingCards[0];
+                    nextCard.id = 'currentTinderCard';
+                    nextCard.classList.remove('upcoming-card');
+                    nextCard.classList.add('active-card', 'sliding-in');
+                    
+                    // Scroll to show the new centered active card (spacer handles centering)
+                    container.scrollTo({ left: 0, behavior: 'smooth' });
+                    
+                    tinderCardElement = nextCard;
+                    setupTinderSwipeHandlers();
+                } else {
+                    // No more cards, show "All Done" or load more
+                    if (currentTinderIndex < tinderTalentList.length) {
+                        showNextTinderCard();
+                    } else {
+                        container.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: #94a3b8; width: 100%;">
+                                <h2 style="color: #60a5fa; margin-bottom: 20px;">🎉 All Done!</h2>
+                                <p>You've rated all available talent profiles.</p>
+                            </div>
+                        `;
+                    }
+                }
+                
+                updateTinderProgress();
+            }, 600);
+        }
+
+        function showTinderAnimation(rating) {
+            const statusEl = document.getElementById('tinderStatus');
+            statusEl.textContent = rating === 'Yes' ? 'YES!' : rating === 'No' ? 'NO' : 'MAYBE';
+            statusEl.className = `tinder-status ${rating.toLowerCase()} show`;
+            
+            if (rating === 'Yes') {
+                createConfetti();
+            }
+            
+            setTimeout(() => {
+                statusEl.classList.remove('show');
+            }, 1000);
+        }
+
+        function createConfetti() {
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '50%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+
+        function updateTinderProgress() {
+            const progressEl = document.getElementById('tinderProgress');
+            progressEl.textContent = `${currentTinderIndex + 1} / ${tinderTalentList.length}`;
+        }
+
+        // Link Preview Functions - Extract video embed URL
+        function extractVideoEmbedUrl(url) {
+            // YouTube detection
+            const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const youtubeMatch = url.match(youtubeRegex);
+            if (youtubeMatch) {
+                return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&rel=0`;
+            }
+            
+            // Vimeo detection
+            const vimeoRegex = /(?:vimeo\.com\/)(?:.*\/)?([0-9]+)/;
+            const vimeoMatch = url.match(vimeoRegex);
+            if (vimeoMatch) {
+                return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`;
+            }
+            
+            // Wistia detection
+            const wistiaRegex = /(?:wistia\.(?:com|net)|wi\.st)\/(?:medias|embed)\/([a-zA-Z0-9]+)/;
+            const wistiaMatch = url.match(wistiaRegex);
+            if (wistiaMatch) {
+                return `https://fast.wistia.net/embed/iframe/${wistiaMatch[1]}?autoplay=true`;
+            }
+            
+            // Loom detection
+            const loomRegex = /loom\.com\/share\/([a-zA-Z0-9]+)/;
+            const loomMatch = url.match(loomRegex);
+            if (loomMatch) {
+                return `https://www.loom.com/embed/${loomMatch[1]}`;
+            }
+            
+            // For other sites, return null to use full page embed
+            return null;
+        }
+
+        function openLinkPreview(url) {
+            console.log('openLinkPreview called with URL:', url);
+            
+            if (!url || url.trim() === '') {
+                alert('No casting link available');
+                return;
+            }
+            
+            const modal = document.getElementById('linkPreviewModal');
+            const iframe = document.getElementById('linkPreviewIframe');
+            const videoContainer = document.getElementById('linkPreviewVideoContainer');
+            const videoPlayer = document.getElementById('linkPreviewVideoPlayer');
+            const errorDiv = document.getElementById('linkPreviewError');
+            const errorOpenTabLink = document.getElementById('linkPreviewErrorOpenTab');
+            const loadingDiv = document.getElementById('linkPreviewLoading');
+            const openTabLink = document.getElementById('linkPreviewOpenTab');
+            
+            if (!modal || !iframe) {
+                console.error('Modal or iframe elements not found!');
+                alert('Preview modal not found. Please refresh the page.');
+                return;
+            }
+            
+            // Reset state
+            errorDiv.style.display = 'none';
+            loadingDiv.style.display = 'flex';
+            iframe.style.display = 'none';
+            videoContainer.style.display = 'none';
+            videoPlayer.src = '';
+            
+            // Ensure URL is properly formatted
+            let formattedUrl = url.trim();
+            if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+                formattedUrl = 'https://' + formattedUrl;
+            }
+            
+            console.log('Formatted URL:', formattedUrl);
+            
+            // Set up "Open in New Tab" links
+            openTabLink.href = formattedUrl;
+            if (errorOpenTabLink) {
+                errorOpenTabLink.href = formattedUrl;
+            }
+            
+            // Check if it's a site that blocks iframe embedding
+            const blockedSites = ['castingnetworks.com', 'app.castingnetworks.com'];
+            const isBlockedSite = blockedSites.some(site => formattedUrl.toLowerCase().includes(site.toLowerCase()));
+            
+            if (isBlockedSite) {
+                // Show helpful message immediately for blocked sites
+                loadingDiv.style.display = 'none';
+                errorDiv.innerHTML = `
+                    <p style="margin-bottom: 20px; font-size: 1.5rem;">🎬</p>
+                    <p style="margin-bottom: 20px; font-size: 1.1rem; font-weight: 600; color: #f8fafc;">Casting Networks blocks preview embedding</p>
+                    <p style="margin-bottom: 20px; font-size: 1rem; color: #94a3b8;">
+                        This site uses security features that prevent preview embedding. 
+                        Click the button below to open it in a new tab and view the video.
+                    </p>
+                    <a href="${formattedUrl}" target="_blank" 
+                       style="display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; 
+                              text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1rem;
+                              transition: all 0.2s ease; margin-top: 10px;"
+                       onmouseover="this.style.background='#2563eb'; this.style.transform='scale(1.05)'"
+                       onmouseout="this.style.background='#3b82f6'; this.style.transform='scale(1)'">
+                        🎬 Open Casting Networks Video
+                    </a>
+                `;
+                errorDiv.style.display = 'block';
+                iframe.style.display = 'none';
+                modal.style.display = 'flex';
+                return;
+            }
+            
+            // Try to extract video embed URL
+            const videoEmbedUrl = extractVideoEmbedUrl(formattedUrl);
+            
+            // Show modal first
+            modal.style.display = 'flex';
+            
+            if (videoEmbedUrl) {
+                // Use video player embed
+                console.log('Detected video platform, using video embed:', videoEmbedUrl);
+                setTimeout(() => {
+                    videoPlayer.src = videoEmbedUrl;
+                    videoContainer.style.display = 'block';
+                    loadingDiv.style.display = 'none';
+                    errorDiv.style.display = 'none';
+                }, 100);
+            } else {
+                // Use full page iframe
+                console.log('Using full page iframe');
+                iframe.src = 'about:blank';
+                
+                setTimeout(() => {
+                    console.log('Setting iframe src to:', formattedUrl);
+                    iframe.src = formattedUrl;
+                    iframe.style.display = 'block';
+                    
+                    // Set up load handler
+                    iframe.onload = function() {
+                        console.log('Iframe loaded successfully');
+                        loadingDiv.style.display = 'none';
+                        iframe.style.display = 'block';
+                        errorDiv.style.display = 'none';
+                    };
+                }, 100);
+            }
+            
+            // Fallback: check if iframe loaded after 3 seconds
+            setTimeout(() => {
+                if (loadingDiv.style.display !== 'none') {
+                    console.log('Checking iframe load status...');
+                    try {
+                        // Try to access iframe - will throw for cross-origin (which is normal)
+                        const test = iframe.contentWindow;
+                        console.log('Iframe accessible, assuming loaded');
+                        loadingDiv.style.display = 'none';
+                        iframe.style.display = 'block';
+                    } catch (e) {
+                        // Cross-origin - this is expected for external sites
+                        // If we can't access it, assume it's loading or blocked
+                        console.log('Cross-origin iframe (expected):', e.message);
+                        // Show the iframe anyway - it might be loading
+                        loadingDiv.style.display = 'none';
+                        iframe.style.display = 'block';
+                        
+                        // If still blank after more time, show error
+                        setTimeout(() => {
+                            try {
+                                const doc = iframe.contentDocument || iframe.contentWindow.document;
+                                if (!doc || doc.body.innerHTML.trim() === '') {
+                                    console.log('Iframe appears empty, showing error');
+                                    handleIframeConnectionError(formattedUrl);
+                                }
+                            } catch (e2) {
+                                // Can't check due to CORS - might be blocked
+                                console.log('Cannot check iframe content (CORS):', e2.message);
+                                // Check if iframe actually loaded by checking if it's still blank
+                                setTimeout(() => {
+                                    // If loading is still showing, likely blocked
+                                    if (loadingDiv.style.display === 'none' && iframe.style.display === 'block') {
+                                        // Give it a bit more time, then show error if needed
+                                        setTimeout(() => {
+                                            // Final check - if we can't verify, show helpful error
+                                            handleIframeConnectionError(formattedUrl);
+                                        }, 2000);
+                                    }
+                                }, 1000);
+                            }
+                        }, 3000);
+                    }
+                }
+            }, 3000);
+            
+            // Close modal when clicking outside
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    closeLinkPreview();
+                }
+            };
+        }
+
+        function handleIframeError() {
+            const errorDiv = document.getElementById('linkPreviewError');
+            const loadingDiv = document.getElementById('linkPreviewLoading');
+            const iframe = document.getElementById('linkPreviewIframe');
+            loadingDiv.style.display = 'none';
+            errorDiv.style.display = 'block';
+            iframe.style.display = 'none';
+        }
+
+        function handleIframeLoad() {
+            const errorDiv = document.getElementById('linkPreviewError');
+            const loadingDiv = document.getElementById('linkPreviewLoading');
+            const iframe = document.getElementById('linkPreviewIframe');
+            loadingDiv.style.display = 'none';
+            iframe.style.display = 'block';
+            errorDiv.style.display = 'none';
+        }
+
+        function closeLinkPreview() {
+            const modal = document.getElementById('linkPreviewModal');
+            const iframe = document.getElementById('linkPreviewIframe');
+            const videoContainer = document.getElementById('linkPreviewVideoContainer');
+            const videoPlayer = document.getElementById('linkPreviewVideoPlayer');
+            const errorDiv = document.getElementById('linkPreviewError');
+            const loadingDiv = document.getElementById('linkPreviewLoading');
+            
+            modal.style.display = 'none';
+            errorDiv.style.display = 'none';
+            loadingDiv.style.display = 'flex';
+            // Clear iframe and video to stop loading
+            iframe.src = 'about:blank';
+            iframe.style.display = 'none';
+            if (videoPlayer) {
+                videoPlayer.src = '';
+            }
+            if (videoContainer) {
+                videoContainer.style.display = 'none';
+            }
+        }
+
         // Weight control functions
         function openWeightModal() {
             console.log('=== OPENING WEIGHT MODAL ===');
@@ -2295,8 +3443,8 @@
                     { name: 'Fran', rating: franRating, notes: franNotes },
                     { name: 'Victor', rating: victorRating, notes: victorNotes },
                     { name: 'Lauren', rating: laurenRating, notes: laurenNotes },
-                    { name: 'Pim', rating: pimRating, notes: pimNotes },
-                    { name: 'Torben', rating: torbenRating, notes: torbenNotes }
+                    { name: 'Pim', rating: pimRating, notes: pimNotes, displayName: displayNames['Pim'] || 'Pim' },
+                    { name: 'Torben', rating: torbenRating, notes: torbenNotes, displayName: displayNames['Torben'] || 'Torben' }
                 ];
                 
                 const newTeamRating = calculateTeamRating(ratings);
@@ -2417,12 +3565,18 @@
             // Clear existing content first
             profileOptionsContainer.innerHTML = '';
             
-            profileOptionsContainer.innerHTML = users.map(user => `
+            profileOptionsContainer.innerHTML = users.map(user => {
+                const displayName = displayNames[user] || user;
+                const profilePic = profilePictures[user];
+                const isEmoji = profilePic && profilePic.length <= 3 && /[\u{1F300}-\u{1F9FF}]/u.test(profilePic);
+                
+                return `
                 <div class="profile-option ${user === 'Torben' ? 'torben-special' : ''}" onclick="selectProfile('${user}')" data-user="${user}">
-                    <img src="${profilePictures[user]}" alt="${user}" class="profile-pic">
-                    <span>${user}</span>
+                    ${isEmoji ? `<div class="profile-pic-emoji" style="font-size: 60px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(59, 130, 246, 0.2);">${profilePic}</div>` : `<img src="${profilePic}" alt="${user}" class="profile-pic">`}
+                    <span>${displayName}</span>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // Select profile function
@@ -2437,8 +3591,29 @@
             document.getElementById('mainApp').style.display = 'block';
             
             // Update current user display
-            document.getElementById('currentUserPic').src = profilePictures[user];
-            document.getElementById('currentUserName').textContent = user;
+            const currentUserPic = document.getElementById('currentUserPic');
+            const profilePic = profilePictures[user];
+            const isEmoji = profilePic && profilePic.length <= 3 && /[\u{1F300}-\u{1F9FF}]/u.test(profilePic);
+            
+            if (isEmoji) {
+                currentUserPic.style.display = 'none';
+                // Create or update emoji display
+                let emojiDisplay = document.getElementById('currentUserPicEmoji');
+                if (!emojiDisplay) {
+                    emojiDisplay = document.createElement('div');
+                    emojiDisplay.id = 'currentUserPicEmoji';
+                    emojiDisplay.style.cssText = 'font-size: 40px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(59, 130, 246, 0.2); border: 2px solid #3b82f6;';
+                    currentUserPic.parentNode.insertBefore(emojiDisplay, currentUserPic);
+                }
+                emojiDisplay.textContent = profilePic;
+                emojiDisplay.style.display = 'flex';
+            } else {
+                currentUserPic.style.display = 'block';
+                currentUserPic.src = profilePic;
+                const emojiDisplay = document.getElementById('currentUserPicEmoji');
+                if (emojiDisplay) emojiDisplay.style.display = 'none';
+            }
+            document.getElementById('currentUserName').textContent = displayNames[user] || user;
             
             // Talent data should already be loaded from the video intro
             if (talentData.length > 0) {
@@ -2479,10 +3654,13 @@
             
             // Callback profiles
             document.getElementById('callbackProfilesBtn').addEventListener('click', toggleCallbackProfiles);
+            
+            // Talent Tinder
+            document.getElementById('talentTinderBtn').addEventListener('click', openTalentTinder);
         }
 
         // Configuration
-        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKPheGW2h9clTEvl3HpFGBuU78Gh1hbVo2XnWLPB1dA-AFOQRVjm4qQ2EhPrEeSW9zVQ/exec';
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwI3tCaYYEd1G6eemhsyy_cbcQ2AbzELLTvTn1Ezhb8F1zErtDTldYHsrkV7xV8kQWhAg/exec';
 
         // Load talent data from Google Sheets
         function loadTalentData() {
@@ -2760,6 +3938,13 @@
         function getRoleEmoji(role) {
             const roleLower = (role || '').toLowerCase();
             
+            // New roles
+            if (roleLower.includes('everyman')) return '👤';
+            if (roleLower.includes('calendar expert')) return '📅';
+            if (roleLower.includes('jan 5 street correspondent') || roleLower.includes('street correspondent')) return '🎙️';
+            if (roleLower.includes('midwest couple')) return '👫';
+            if (roleLower.includes('utility player')) return '⚡';
+            
             if (roleLower.includes('dog') || roleLower.includes('walker')) return '🐕';
             if (roleLower.includes('gym') || roleLower.includes('workout') || roleLower.includes('fitness')) return '💪';
             if (roleLower.includes('diy') || roleLower.includes('welding') || roleLower.includes('woodwork')) return '🔨';
@@ -2822,8 +4007,8 @@
                 { name: 'Fran', rating: franRating },
                 { name: 'Victor', rating: victorRating },
                 { name: 'Lauren', rating: laurenRating },
-                { name: 'Pim', rating: pimRating },
-                { name: 'Torben', rating: torbenRating }
+                { name: 'Pim', rating: pimRating, displayName: displayNames['Pim'] || 'Pim' },
+                { name: 'Torben', rating: torbenRating, displayName: displayNames['Torben'] || 'Torben' }
             ];
 
             const currentUserRating = selectedUser ? ratings.find(r => r.name === selectedUser)?.rating || '' : '';
@@ -2841,7 +4026,7 @@
                         <div class="talent-role">${roleEmoji} ${role || 'No Role'}</div>
 
                         <div class="talent-details">
-                            <div class="detail-row">
+                            <div class="detail-row" style="display: none;">
                                 <span class="detail-label">Age:</span>
                                 <span class="detail-value">${age || 'N/A'}</span>
                             </div>
@@ -2853,13 +4038,13 @@
                                 <span class="detail-label">Ethnicity:</span>
                                 <span class="detail-value">${ethnicity || 'N/A'}</span>
                             </div>
-                            <div class="detail-row">
+                            <div class="detail-row" style="display: none;">
                                 <span class="detail-label">Country:</span>
                                 <span class="detail-value">${country || 'N/A'}</span>
                             </div>
                         </div>
 
-                         ${link ? `<div class="link-handle"><a href="${link}" target="_blank">View Casting Link</a></div>` : ''}
+                         ${link ? `<div class="link-handle"><a href="${link}" target="_blank" title="${link}">🔗 Casting Link</a></div>` : ''}
 
                         <div class="rating-controls">
                             <div class="rating-buttons">
@@ -3097,25 +4282,27 @@
                     </div>
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
-                        <div><strong style="color: #60a5fa;">Age:</strong> <span style="color: #cbd5e1;">${age || 'N/A'}</span></div>
+                        <div style="display: none;"><strong style="color: #60a5fa;">Age:</strong> <span style="color: #cbd5e1;">${age || 'N/A'}</span></div>
                         <div><strong style="color: #60a5fa;">Gender:</strong> <span style="color: #cbd5e1;">${gender || 'N/A'}</span></div>
                         <div><strong style="color: #60a5fa;">Ethnicity:</strong> <span style="color: #cbd5e1;">${ethnicity || 'N/A'}</span></div>
-                        <div><strong style="color: #60a5fa;">Country:</strong> <span style="color: #cbd5e1;">${country || 'N/A'}</span></div>
+                        <div style="display: none;"><strong style="color: #60a5fa;">Country:</strong> <span style="color: #cbd5e1;">${country || 'N/A'}</span></div>
                     </div>
                     
-                     ${link ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${link}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600;">View Casting Link</a></div>` : ''}
+                     ${link ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${link}" target="_blank" style="color: #60a5fa; text-decoration: none; font-weight: 600;" title="${link}">🔗 Casting Link</a></div>` : ''}
                      ${callbackLink ? `<div style="text-align: center; margin-bottom: 30px;"><a href="${callbackLink}" target="_blank" style="color: #10b981; text-decoration: none; font-weight: 600; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 8px; border: 1px solid #10b981;">📞 Callback Link</a></div>` : ''}
                     
                     <div style="border-top: 1px solid rgba(59, 130, 246, 0.2); padding-top: 20px;" data-team-ratings>
                         <h3 style="color: #60a5fa; margin-bottom: 15px;">Team Ratings & Notes</h3>
                         ${ratings.map(r => {
                             const userProfilePic = profilePictures[r.name] || 'https://via.placeholder.com/30x30?text=' + r.name.charAt(0);
+                            const isEmojiPic = userProfilePic && userProfilePic.length <= 3 && /[\u{1F300}-\u{1F9FF}]/u.test(userProfilePic);
+                            const displayName = (r.displayName || displayNames[r.name] || r.name);
                             return `
                                 <div style="margin-bottom: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                         <div style="display: flex; align-items: center; gap: 10px;">
-                                            <img src="${userProfilePic}" alt="${r.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">
-                                            <strong style="color: #f8fafc;">${r.name}</strong>
+                                            ${isEmojiPic ? `<div style="width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.2); border: 2px solid #3b82f6; font-size: 20px;">${userProfilePic}</div>` : `<img src="${userProfilePic}" alt="${displayName}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">`}
+                                            <strong style="color: #f8fafc;">${displayName}</strong>
                                             ${getWeightBadge(r.name)}
                                         </div>
                                         <span style="
@@ -3700,8 +4887,8 @@
                         <div style="margin-bottom: 15px; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <img src="${userProfilePic}" alt="${r.name}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">
-                                    <strong style="color: #f8fafc;">${r.name}</strong>
+                                    ${isEmojiPic ? `<div style="width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.2); border: 2px solid #3b82f6; font-size: 20px;">${userProfilePic}</div>` : `<img src="${userProfilePic}" alt="${displayName}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid #3b82f6;">`}
+                                    <strong style="color: #f8fafc;">${displayName}</strong>
                                     ${getWeightBadge(r.name)}
                                 </div>
                                 <span style="
@@ -4155,6 +5342,10 @@
             
             return filters.length > 0 ? filters.join(', ') : 'All Talents';
         }
+
+        // Make link preview functions globally accessible
+        window.openLinkPreview = openLinkPreview;
+        window.closeLinkPreview = closeLinkPreview;
     </script>
 
     <!-- Required Libraries for Download Feature -->
